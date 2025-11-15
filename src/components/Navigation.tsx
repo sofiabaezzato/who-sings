@@ -1,0 +1,177 @@
+import { Menu, PlayCircle, Trophy, User, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router";
+import logo from "@/assets/logo.png";
+import { Button } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
+
+export function Navigation() {
+	const location = useLocation();
+	const { player, isLoggedIn, logout } = useAuth();
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const mobileMenuRef = useRef<HTMLDivElement>(null);
+	const mobileButtonRef = useRef<HTMLDivElement>(null);
+
+	const navigationLinks = [
+		{ to: "/quiz", label: "Quiz", icon: PlayCircle },
+		{ to: "/leaderboard", label: "Leaderboard", icon: Trophy },
+	];
+
+	// Close mobile menu when clicking outside
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			const target = event.target as Node;
+			const isInsideMenu =
+				mobileMenuRef.current && mobileMenuRef.current.contains(target);
+			const isInsideButton =
+				mobileButtonRef.current && mobileButtonRef.current.contains(target);
+
+			if (!isInsideMenu && !isInsideButton) {
+				setIsMobileMenuOpen(false);
+			}
+		}
+
+		if (isMobileMenuOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+			return () => {
+				document.removeEventListener("mousedown", handleClickOutside);
+			};
+		}
+	}, [isMobileMenuOpen]);
+
+	return (
+		<nav className="relative bg-white border-b border-gray-200 px-4 py-4">
+			<div className="max-w-7xl mx-auto grid grid-cols-3 items-center">
+				{/* Logo - Left */}
+				<Link to="/" className="flex items-center space-x-2 justify-self-start">
+					<img src={logo} alt="Musixmatch" className="h-10 w-auto" />
+				</Link>
+
+				{/* Desktop Navigation - Center */}
+				<div className="hidden md:flex justify-center space-x-1">
+					{navigationLinks.map((link) => {
+						const Icon = link.icon;
+						const isActive = location.pathname === link.to;
+						return (
+							<Link
+								key={link.to}
+								to={link.to}
+								className={cn(
+									"flex items-center space-x-2 px-5 py-3 rounded-full text-md font-semibold transition-colors",
+									isActive
+										? "text-orange-600 bg-orange-50"
+										: "text-gray-800 hover:text-gray-900 hover:bg-neutral-100",
+								)}
+							>
+								<Icon className="w-6 h-6" />
+								<span>{link.label}</span>
+							</Link>
+						);
+					})}
+				</div>
+
+				{/* Desktop Profile Dropdown - Right */}
+				<div className="hidden md:flex items-center justify-self-end">
+					{isLoggedIn && (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									variant="ghost"
+									size="sm"
+									className="flex items-center space-x-2"
+								>
+									<User className="w-4 h-4" />
+									<span>{player?.name}</span>
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuItem asChild>
+									<Link to="/profile">Profile</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					)}
+				</div>
+
+				{/* Mobile Menu Button */}
+				<div
+					ref={mobileButtonRef}
+					className="md:hidden col-span-2 flex justify-end"
+				>
+					<Button
+						variant="ghost"
+						className="rounded-full h-10 w-10"
+						size="lg"
+						onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+					>
+						{isMobileMenuOpen ? (
+							<X className="w-8 h-8" />
+						) : (
+							<Menu className="w-8 h-8" />
+						)}
+					</Button>
+				</div>
+			</div>
+
+			{/* Mobile Menu */}
+			{isMobileMenuOpen && (
+				<div
+					ref={mobileMenuRef}
+					className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50"
+				>
+					<div className="p-4 space-y-2">
+						{navigationLinks.map((link) => {
+							const Icon = link.icon;
+							const isActive = location.pathname === link.to;
+							return (
+								<Link
+									key={link.to}
+									to={link.to}
+									className={cn(
+										"flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-full transition-colors",
+										isActive
+											? "text-orange-600 bg-orange-50"
+											: "text-gray-800 hover:text-gray-900 hover:bg-neutral-100",
+									)}
+									onClick={() => setIsMobileMenuOpen(false)}
+								>
+									<Icon className="w-5 h-5" />
+									<span>{link.label}</span>
+								</Link>
+							);
+						})}
+						{isLoggedIn && (
+							<>
+								<hr className="my-2" />
+								<Link
+									to="/profile"
+									className="block px-4 py-2 text-base font-medium text-gray-700 hover:text-purple-600 hover:bg-gray-50 rounded-md"
+									onClick={() => setIsMobileMenuOpen(false)}
+								>
+									Profile ({player?.name})
+								</Link>
+								<button
+									onClick={() => {
+										logout();
+										setIsMobileMenuOpen(false);
+									}}
+									className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 hover:text-purple-600 hover:bg-gray-50 rounded-md"
+								>
+									Logout
+								</button>
+							</>
+						)}
+					</div>
+				</div>
+			)}
+		</nav>
+	);
+}
