@@ -1,87 +1,64 @@
-import { createContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, type ReactNode, useEffect, useState } from "react";
 
-interface GameResult {
-  score: number
-  totalQuestions: number
-  completedAt: string
-  timeSpent: number
-}
-
-interface Player {
-  name: string
-  id: string
-  gameHistory: GameResult[]
+interface AuthPlayer {
+	name: string;
+	id: string;
 }
 
 interface AuthContextType {
-  player: Player | null
-  isLoggedIn: boolean
-  login: (name: string) => void
-  logout: () => void
-  addGameResult: (result: GameResult) => void
+	player: AuthPlayer | null;
+	isLoggedIn: boolean;
+	login: (name: string, id: string) => void;
+	logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null)
+const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
-  children: ReactNode
+	children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [player, setPlayer] = useState<Player | null>(null)
+	const [player, setPlayer] = useState<AuthPlayer | null>(null);
 
-  useEffect(() => {
-    const savedPlayer = localStorage.getItem('who-sings-player')
-    if (savedPlayer) {
-      try {
-        setPlayer(JSON.parse(savedPlayer))
-      } catch (error) {
-        localStorage.removeItem('who-sings-player')
-      }
-    }
-  }, [])
+	useEffect(() => {
+		const savedCurrentPlayer = localStorage.getItem("who-sings-current-player");
 
-  const login = (name: string) => {
-    const newPlayer: Player = {
-      name: name.trim(),
-      id: `player-${crypto.randomUUID()}`,
-      gameHistory: []
+		if (savedCurrentPlayer) {
+			try {
+				setPlayer(JSON.parse(savedCurrentPlayer));
+			} catch (error) {
+				localStorage.removeItem("who-sings-current-player");
+			}
 		}
-    
-    setPlayer(newPlayer)
-    localStorage.setItem('who-sings-player', JSON.stringify(newPlayer))
-  }
+	}, []);
 
-  const addGameResult = (result: GameResult) => {
-    if (!player) return
-    
-    const updatedPlayer: Player = {
-      ...player,
-      gameHistory: [...player.gameHistory, result]
-    }
-    
-    setPlayer(updatedPlayer)
-    localStorage.setItem('who-sings-player', JSON.stringify(updatedPlayer))
-  }
+	const login = (name: string, id: string) => {
+		const authPlayer: AuthPlayer = {
+			name: name.trim(),
+			id,
+		};
 
-  const logout = () => {
-    setPlayer(null)
-    localStorage.removeItem('who-sings-player')
-  }
+		setPlayer(authPlayer);
+		localStorage.setItem(
+			"who-sings-current-player",
+			JSON.stringify(authPlayer),
+		);
+	};
 
-  const value: AuthContextType = {
-    player,
-    isLoggedIn: player !== null,
-    login,
-    logout,
-    addGameResult
-  }
+	const logout = () => {
+		setPlayer(null);
+		localStorage.removeItem("who-sings-current-player");
+	};
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+	const value: AuthContextType = {
+		player,
+		isLoggedIn: player !== null,
+		login,
+		logout,
+	};
+
+	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export { AuthContext }
+export { AuthContext };
