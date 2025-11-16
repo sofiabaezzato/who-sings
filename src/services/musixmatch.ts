@@ -2,7 +2,6 @@ import type { Question } from "@/contexts/GameContext";
 import type { MusixmatchApiResponse, MusixmatchTrack } from "@/types";
 import { API_CONFIG, GAME_CONFIG } from "@/utils/constants";
 
-const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = API_CONFIG.BASE_URL;
 
 async function apiCall<T>(
