@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/tracks.ts": {
+      "runtime": "@vercel/node"
+    },
+    "api/snippet.ts": {
+      "runtime": "@vercel/node"
+    }
+  },
+  "env": {
+    "MUSIXMATCH_API_KEY": "@musixmatch_api_key"
+  }
+}
