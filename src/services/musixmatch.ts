@@ -58,7 +58,7 @@ export async function getPopularTracks(limit = 50) {
 			country: API_CONFIG.DEFAULT_COUNTRY,
 			page_size: limit.toString(),
 			f_has_lyrics: "1",
-			s_track_rating: "desc",
+			chart_name: "mxmweekly", // chart: most viewed lyrics in the last 7 days
 		},
 	);
 
@@ -85,7 +85,7 @@ export async function getTrackSnippet(trackId: number) {
 export async function generateQuizQuestions(
 	questionCount = GAME_CONFIG.QUESTIONS_PER_GAME,
 ): Promise<Question[]> {
-	const tracks = await getPopularTracks(questionCount * 3);
+	const tracks = await getPopularTracks(questionCount * 5);
 
 	if (tracks.length < questionCount) {
 		throw new Error("Not enough tracks available from Musixmatch API");
@@ -94,6 +94,9 @@ export async function generateQuizQuestions(
 	const questions: Question[] = [];
 	const usedArtists = new Set<string>();
 	const allArtists = [...new Set(tracks.map((t) => t.artistName))];
+
+	// Shuffle tracks to get random order each time
+	tracks.sort(() => Math.random() - 0.5);
 
 	for (let i = 0; i < questionCount && tracks.length > 0; i++) {
 		const availableTrack = tracks.find(
