@@ -1,6 +1,6 @@
 // Game configuration
 export const GAME_CONFIG = {
-	QUESTIONS_PER_GAME: 10,
+	QUESTIONS_PER_GAME: 2,
 	TIME_PER_QUESTION_S: 20,
 	BASE_POINTS: 100,
 	TIME_BONUS_MULTIPLIER: 0.5,
@@ -11,7 +11,8 @@ export const GAME_CONFIG = {
 // API configuration
 export const API_CONFIG = {
 	BASE_URL:
-		import.meta.env.VITE_API_BASE_URL || "https://api.musixmatch.com/ws/1.1",
+		import.meta.env.VITE_API_BASE_URL || 
+		(import.meta.env.DEV ? "/api" : "/api"),
 	RATE_LIMIT_DELAY_MS: 200,
 	DEFAULT_COUNTRY: "it",
 	DEFAULT_PAGE_SIZE: 50,

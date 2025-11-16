@@ -9,16 +9,25 @@ async function apiCall<T>(
 	endpoint: string,
 	params: Record<string, string> = {},
 ): Promise<T> {
-	// Handle relative URLs for development proxy
-	const fullUrl = BASE_URL.startsWith("/")
-		? `${window.location.origin}${BASE_URL}/${endpoint}`
-		: `${BASE_URL}/${endpoint}`;
+	// Map endpoints to serverless function paths for production
+	const endpointMap: Record<string, string> = {
+		"chart.tracks.get": "tracks",
+		"track.snippet.get": "snippet",
+	};
 
-	const url = new URL(fullUrl);
+	let url: URL;
 
-	// API key handling based on environment configuration
-	if (API_KEY) {
-		url.searchParams.append("apikey", API_KEY);
+	if (import.meta.env.DEV) {
+		// Development: use Vite proxy
+		url = new URL(`${window.location.origin}${BASE_URL}/${endpoint}`);
+		// API key injected by Vite proxy
+	} else {
+		// Production: use serverless functions
+		const functionPath = endpointMap[endpoint];
+		if (!functionPath) {
+			throw new Error(`Unsupported endpoint: ${endpoint}`);
+		}
+		url = new URL(`${window.location.origin}${BASE_URL}/${functionPath}`);
 	}
 
 	Object.entries(params).forEach(([key, value]) => {
