@@ -48,14 +48,18 @@ export function Navigation() {
 
 	return (
 		<nav className="relative bg-white border-b border-gray-200 px-4 py-4">
-			<div className="max-w-7xl mx-auto grid grid-cols-3 items-center">
+			<div className="max-w-7xl mx-auto flex items-center justify-between">
 				{/* Logo - Left */}
-				<Link to="/" className="flex items-center space-x-2 justify-self-start">
-					<img src={logo} alt="Musixmatch" className="h-10 w-auto" />
+				<Link to="/" className="flex items-center space-x-2">
+					<img
+						src={logo}
+						alt="Musixmatch"
+						className="h-10 w-auto flex-shrink-0"
+					/>
 				</Link>
 
 				{/* Desktop Navigation - Center */}
-				<div className="hidden md:flex justify-center space-x-1">
+				<div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-1">
 					{navigationLinks.map((link) => {
 						const Icon = link.icon;
 						const isActive = location.pathname === link.to;
@@ -78,18 +82,14 @@ export function Navigation() {
 				</div>
 
 				{/* Desktop Profile Dropdown - Right */}
-				<div className="hidden md:flex items-center justify-self-end">
+				<div className="hidden md:flex items-center">
 					{isLoggedIn && (
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<Button
-									variant="ghost"
-									size="sm"
-									className="flex items-center space-x-2"
-								>
-									<User className="w-4 h-4" />
+								<button className="flex items-center space-x-2 px-5 py-3 rounded-full transition-colors text-md font-semibold text-gray-800 hover:text-gray-900 hover:bg-neutral-100 cursor-pointer">
+									<User className="w-6 h-6" />
 									<span>{player?.name}</span>
-								</Button>
+								</button>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end">
 								<DropdownMenuItem asChild>
@@ -102,10 +102,7 @@ export function Navigation() {
 				</div>
 
 				{/* Mobile Menu Button */}
-				<div
-					ref={mobileButtonRef}
-					className="md:hidden col-span-2 flex justify-end"
-				>
+				<div ref={mobileButtonRef} className="md:hidden">
 					<Button
 						variant="ghost"
 						className="rounded-full h-10 w-10"

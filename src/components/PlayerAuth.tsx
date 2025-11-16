@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { usePlayerLogin } from "../hooks/usePlayerLogin";
-import { Button } from "./ui/button";
 
 interface PlayerAuthProps {
 	onAuthComplete?: () => void;
@@ -34,7 +33,7 @@ export function PlayerAuth({ onAuthComplete }: PlayerAuthProps) {
 				<h1 className="text-4xl font-bold text-gray-800 mb-2">WHO SINGS?</h1>
 				<p className="text-gray-800 font-semibold">Test your music knowledge</p>
 			</div>
-			<div className="flex-1 flex items-center justify-center p-4">
+			<div className="flex-1 flex justify-center p-4">
 				<div className="w-full max-w-md">
 					<div className="bg-white rounded-3xl shadow-xl p-8 text-center">
 						<form onSubmit={handleSubmit} className="space-y-6">
@@ -57,13 +56,12 @@ export function PlayerAuth({ onAuthComplete }: PlayerAuthProps) {
 								/>
 							</div>
 
-							<Button
-								type="submit"
+							<button
 								disabled={!name.trim() || isLoading}
-								className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 text-lg disabled:cursor-not-allowed"
+								className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-200 text-lg cursor-pointer disabled:cursor-not-allowed"
 							>
 								{isLoading ? "Starting..." : "Start Playing"}
-							</Button>
+							</button>
 						</form>
 
 						<p className="text-sm text-gray-500 mt-6">
