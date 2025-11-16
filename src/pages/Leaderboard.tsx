@@ -98,7 +98,7 @@ export default function Leaderboard() {
 							</p>
 						</div>
 					) : (
-						<div className="p-6">
+						<div className="p-12">
 							{leaderboard.map((entry, index) => {
 								const rank = index + 1;
 								const isCurrentPlayer =
