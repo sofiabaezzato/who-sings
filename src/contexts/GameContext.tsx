@@ -5,6 +5,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import { GAME_CONFIG } from "../utils/constants";
 
 export interface Track {
 	trackId: number;
@@ -41,7 +42,11 @@ export interface GameState {
 interface GameContextType {
 	gameState: GameState;
 	currentQuestion: Question | null;
-	answerQuestion: (answer: string, timeRemaining: number, hintUsed?: boolean) => void;
+	answerQuestion: (
+		answer: string,
+		timeRemaining: number,
+		hintUsed?: boolean,
+	) => void;
 	nextQuestion: () => void;
 	resetGame: () => void;
 	startNewGame: (questions: Question[]) => void;
@@ -86,19 +91,22 @@ export function GameProvider({ children }: GameProviderProps) {
 	const calculatePoints = (
 		isCorrect: boolean,
 		timeRemaining: number,
-		hintUsed: boolean = false,
+		hintUsed = false,
 	): number => {
 		if (!isCorrect) return 0;
 
-		const basePoints = 100;
-		const timeBonus = Math.floor((timeRemaining / 30) * 50);
+		const basePoints = GAME_CONFIG.BASE_POINTS;
+		const timeBonus = Math.floor(
+			(timeRemaining / GAME_CONFIG.TIME_PER_QUESTION_S) *
+				(GAME_CONFIG.BASE_POINTS * GAME_CONFIG.TIME_BONUS_MULTIPLIER),
+		);
 		const totalPoints = basePoints + timeBonus;
-		
+
 		return hintUsed ? Math.floor(totalPoints / 2) : totalPoints;
 	};
 
 	const answerQuestion = useCallback(
-		(answer: string, timeRemaining: number, hintUsed: boolean = false) => {
+		(answer: string, timeRemaining: number, hintUsed = false) => {
 			if (!currentQuestion || gameState.isComplete) return;
 
 			const isCorrect = answer === currentQuestion.correctArtist;

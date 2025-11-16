@@ -31,7 +31,7 @@ export function TimerProvider({ children }: TimerProviderProps) {
 	const [isPaused, setIsPaused] = useState(false);
 	const [totalDuration, setTotalDuration] = useState(0);
 
-	const intervalRef = useRef<NodeJS.Timeout | null>(null);
+	const intervalRef = useRef<number | null>(null);
 	const onTimeoutRef = useRef<(() => void) | null>(null);
 
 	const clearExistingTimer = useCallback(() => {
