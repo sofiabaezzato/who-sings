@@ -33,7 +33,7 @@ export function useShareCard() {
 
 			// Generate canvas from the card element
 			const canvas = await html2canvas(cardElement, {
-				backgroundColor: null,
+				backgroundColor: 'rgba(0,0,0,0)',
 				scale: 2,
 				useCORS: true,
 				logging: false,
