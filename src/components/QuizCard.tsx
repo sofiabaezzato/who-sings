@@ -2,6 +2,7 @@ import { Lightbulb } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useGame } from "../hooks/useGame";
 import { useTimer } from "../hooks/useTimer";
+import { cn } from "../lib/utils";
 import { AnswerOptions } from "./AnswerOptions";
 import { ProgressBar } from "./ProgressBar";
 import { QuestionIndicators } from "./QuestionIndicators";
@@ -22,7 +23,7 @@ export function QuizCard({ className = "" }: QuizCardProps) {
 
 	if (!currentQuestion) {
 		return (
-			<div className={`flex items-center justify-center h-full ${className}`}>
+			<div className={cn("flex items-center justify-center h-full", className)}>
 				<p className="text-gray-500 text-lg">Loading question...</p>
 			</div>
 		);
@@ -30,7 +31,10 @@ export function QuizCard({ className = "" }: QuizCardProps) {
 
 	return (
 		<div
-			className={`flex flex-col h-full max-w-lg mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden ${className}`}
+			className={cn(
+				"flex flex-col h-full max-w-lg mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden",
+				className
+			)}
 		>
 			{/* Header with progress and timer */}
 			<div className="p-4 bg-gradient-to-r from-orange-300 to-orange-600">

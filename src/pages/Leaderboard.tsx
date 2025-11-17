@@ -1,6 +1,7 @@
 import { Award, Crown, Medal, Target, Trophy } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useGameData } from "../hooks/useGameData";
+import { cn } from "../lib/utils";
 
 export default function Leaderboard() {
 	const { getLeaderboard } = useGameData();
@@ -38,7 +39,10 @@ export default function Leaderboard() {
 			<div className="max-w-4xl mx-auto">
 				{/* Header */}
 				<div
-					className={`bg-white rounded-t-3xl shadow-xl overflow-hidden ${leaderboard.length === 0 && "rounded-3xl mb-6"}`}
+					className={cn(
+						"bg-white rounded-t-3xl shadow-xl overflow-hidden",
+						leaderboard.length === 0 && "rounded-3xl mb-6"
+					)}
 				>
 					<div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-8 md:px-8 md:py-12">
 						<div className="flex flex-col items-center text-center">
@@ -55,7 +59,10 @@ export default function Leaderboard() {
 
 				{leaderboard.length > 0 && (
 					<div
-						className={`bg-white rounded-b-2xl shadow-lg p-6 mb-6 ${leaderboard.length === 0 && "rounded-2xl"}`}
+						className={cn(
+							"bg-white rounded-b-2xl shadow-lg p-6 mb-6",
+							leaderboard.length === 0 && "rounded-2xl"
+						)}
 					>
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
 							<div>
@@ -107,16 +114,19 @@ export default function Leaderboard() {
 								return (
 									<div
 										key={`${entry.playerName}-${rank}`}
-										className={`flex items-center justify-between py-4 ${
-											index !== leaderboard.length - 1
-												? "border-b border-gray-100"
-												: ""
-										} ${isCurrentPlayer ? "bg-orange-50 -mx-6 px-6 rounded-lg" : ""}`}
+										className={cn(
+											"flex items-center justify-between py-4",
+											index !== leaderboard.length - 1 && "border-b border-gray-100",
+											isCurrentPlayer && "bg-orange-50 -mx-6 px-6 rounded-lg"
+										)}
 									>
 										<div className="flex items-center gap-4 flex-1">
 											{/* Rank */}
 											<div
-												className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${getRankBadgeColor(rank)}`}
+												className={cn(
+													"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm",
+													getRankBadgeColor(rank)
+												)}
 											>
 												{rank <= 3 ? (
 													<div className="scale-75">{getRankIcon(rank)}</div>

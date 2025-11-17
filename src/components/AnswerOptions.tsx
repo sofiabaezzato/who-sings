@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useGame } from "../hooks/useGame";
 import { useTimer } from "../hooks/useTimer";
+import { cn } from "../lib/utils";
 
 interface AnswerOptionsProps {
 	options: string[];
@@ -73,7 +74,10 @@ export function AnswerOptions({
 					key={`${questionId}-${index}`}
 					onClick={() => handleAnswerSelect(option)}
 					disabled={showResult}
-					className={`w-full cursor-pointer p-4 rounded-xl font-medium border-2 transition-all duration-200 text-left ${getButtonStyle(option)} disabled:cursor-default`}
+					className={cn(
+						"w-full cursor-pointer p-4 rounded-xl font-medium border-2 transition-all duration-200 text-left disabled:cursor-default",
+						getButtonStyle(option)
+					)}
 				>
 					<span className="block">{option}</span>
 				</button>
@@ -82,7 +86,10 @@ export function AnswerOptions({
 			{showResult && (
 				<div className="text-center mt-4">
 					<p
-						className={`font-medium ${selectedAnswer === correctAnswer ? "text-green-600" : "text-red-600"}`}
+						className={cn(
+							"font-medium",
+							selectedAnswer === correctAnswer ? "text-green-600" : "text-red-600"
+						)}
 					>
 						{selectedAnswer === correctAnswer ? "Correct!" : "Wrong!"}
 					</p>

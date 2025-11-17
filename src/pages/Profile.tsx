@@ -2,6 +2,7 @@ import { Clock, Hash, LogOut, TrendingUp, Trophy } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useGameData } from "../hooks/useGameData";
+import { cn } from "../lib/utils";
 
 export default function Profile() {
 	const navigate = useNavigate();
@@ -49,19 +50,26 @@ export default function Profile() {
 		label: string;
 		value: string | number;
 		color?: string;
-	}) => (
-		<div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-			<div className="flex items-center gap-3">
-				<div className={`p-3 rounded-full bg-${color}-100`}>
-					<Icon className={`w-6 h-6 text-${color}-600`} />
-				</div>
-				<div>
-					<p className="text-sm font-medium text-gray-600">{label}</p>
-					<p className="text-2xl font-bold text-gray-900">{value}</p>
+	}) => {
+		const colorClasses = {
+			bg: color === 'orange' ? 'bg-orange-100' : color === 'blue' ? 'bg-blue-100' : 'bg-gray-100',
+			text: color === 'orange' ? 'text-orange-600' : color === 'blue' ? 'text-blue-600' : 'text-gray-600'
+		};
+
+		return (
+			<div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+				<div className="flex items-center gap-3">
+					<div className={cn("p-3 rounded-full", colorClasses.bg)}>
+						<Icon className={cn("w-6 h-6", colorClasses.text)} />
+					</div>
+					<div>
+						<p className="text-sm font-medium text-gray-600">{label}</p>
+						<p className="text-2xl font-bold text-gray-900">{value}</p>
+					</div>
 				</div>
 			</div>
-		</div>
-	);
+		);
+	};
 
 	return (
 		<div className="min-h-screen p-4">
@@ -147,11 +155,10 @@ export default function Profile() {
 									.map((game, index) => (
 										<div
 											key={index}
-											className={`flex items-center justify-between py-4 ${
-												index !== gameHistory.slice(-10).length - 1
-													? "border-b border-gray-100"
-													: ""
-											}`}
+											className={cn(
+												"flex items-center justify-between py-4",
+												index !== gameHistory.slice(-10).length - 1 && "border-b border-gray-100"
+											)}
 										>
 											<div className="flex items-center gap-4">
 												<div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">

@@ -1,4 +1,5 @@
 import { useTimer } from "../hooks/useTimer";
+import { cn } from "../lib/utils";
 
 interface ProgressBarProps {
 	className?: string;
@@ -9,7 +10,7 @@ export function ProgressBar({ className = "" }: ProgressBarProps) {
 
 	return (
 		<div
-			className={`w-full bg-gray-300 rounded-full h-2 overflow-hidden ${className}`}
+			className={cn("w-full bg-gray-300 rounded-full h-2 overflow-hidden", className)}
 		>
 			<div
 				className="h-full bg-orange-500 transition-all duration-1000 ease-linear rounded-full"
