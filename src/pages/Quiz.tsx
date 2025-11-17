@@ -5,7 +5,6 @@ import { ErrorBoundary, QuizErrorFallback } from "../components/ErrorBoundary";
 import { PlayerAuth } from "../components/PlayerAuth";
 import { QuizCard } from "../components/QuizCard";
 import { ShareCard } from "../components/ShareCard";
-import { GameProvider } from "../contexts/GameContext";
 import { TimerProvider } from "../contexts/TimerContext";
 import { useGameSession } from "../hooks/useGameSession";
 import { useTimer } from "../hooks/useTimer";
@@ -81,7 +80,7 @@ function QuizContent() {
 						ref={shareCardRef}
 						playerName={player?.name || "Player"}
 						totalScore={gameState.totalScore}
-						correctAnswers={gameState.answers.filter((a) => a.isCorrect).length}
+						correctAnswers={gameState.answers.filter((a: any) => a.isCorrect).length}
 						totalQuestions={gameState.questions.length}
 						leaderboardPosition={leaderboardPosition}
 					/>
@@ -209,11 +208,9 @@ export default function Quiz() {
 
 	return (
 		<ErrorBoundary fallback={QuizErrorFallback}>
-			<GameProvider>
-				<TimerProvider>
-					<QuizContent />
-				</TimerProvider>
-			</GameProvider>
+			<TimerProvider>
+				<QuizContent />
+			</TimerProvider>
 		</ErrorBoundary>
 	);
 }

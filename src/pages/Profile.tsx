@@ -176,10 +176,10 @@ export default function Profile() {
 											</div>
 											<div className="text-right">
 												<p className="text-sm font-medium text-gray-900">
-													{new Date(game.completedAt).toLocaleDateString()}
+													{new Date(game.completedAt).toLocaleDateString("it")}
 												</p>
 												<p className="text-xs text-gray-500">
-													{new Date(game.completedAt).toLocaleTimeString()}
+													{new Date(game.completedAt).toLocaleTimeString("it")}
 												</p>
 											</div>
 										</div>

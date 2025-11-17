@@ -1,4 +1,4 @@
-import type { Question } from "@/contexts/GameContext";
+import type { Question } from "@/stores/gameStore";
 import type { MusixmatchApiResponse, MusixmatchTrack } from "@/types";
 import { API_CONFIG, GAME_CONFIG } from "@/utils/constants";
 
