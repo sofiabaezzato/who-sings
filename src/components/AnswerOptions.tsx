@@ -73,7 +73,7 @@ export function AnswerOptions({
 					key={`${questionId}-${index}`}
 					onClick={() => handleAnswerSelect(option)}
 					disabled={showResult}
-					className={`w-full cursor-pointer p-4 rounded-xl font-medium border-2 transition-all duration-200 text-left ${getButtonStyle(option)} disabled:cursor-not-allowed`}
+					className={`w-full cursor-pointer p-4 rounded-xl font-medium border-2 transition-all duration-200 text-left ${getButtonStyle(option)} disabled:cursor-default`}
 				>
 					<span className="block">{option}</span>
 				</button>

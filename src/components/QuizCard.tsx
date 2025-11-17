@@ -47,7 +47,7 @@ export function QuizCard({ className = "" }: QuizCardProps) {
 
 			{/* Lyrics section */}
 			<div className="flex-1 p-6 flex flex-col justify-center">
-				<div className="text-center mb-8">
+				<div className="text-center mb-4">
 					<h2 className="text-lg font-semibold text-gray-800 mb-4">
 						Who sings this?
 					</h2>
@@ -59,7 +59,7 @@ export function QuizCard({ className = "" }: QuizCardProps) {
 					</div>
 
 					{currentQuestion.track && (
-						<div className="mb-6">
+						<div className="h-12">
 							{!hintUsed ? (
 								<button
 									onClick={() => setHintUsed(true)}
