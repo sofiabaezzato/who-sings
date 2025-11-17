@@ -33,8 +33,6 @@ async function apiCall<T>(
 		url.searchParams.append(key, value);
 	});
 
-	console.log(url);
-
 	try {
 		const response = await fetch(url.toString());
 
@@ -91,7 +89,7 @@ export async function getTrackSnippet(trackId: number) {
 
 // Generate quiz questions using lyric snippets
 export async function generateQuizQuestions(
-	questionCount = GAME_CONFIG.QUESTIONS_PER_GAME,
+	questionCount: number = GAME_CONFIG.QUESTIONS_PER_GAME,
 ): Promise<Question[]> {
 	const tracks = await getPopularTracks(questionCount * 5);
 

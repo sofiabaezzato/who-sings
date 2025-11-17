@@ -1,6 +1,7 @@
 import { Clock, Lightbulb, Play, Share, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth.ts";
+import { ErrorBoundary, QuizErrorFallback } from "../components/ErrorBoundary";
 import { PlayerAuth } from "../components/PlayerAuth";
 import { QuizCard } from "../components/QuizCard";
 import { ShareCard } from "../components/ShareCard";
@@ -45,28 +46,6 @@ function QuizContent() {
 		}
 	}, [currentQuestion, gameState.isComplete, startTimer]);
 
-	// Error state
-	if (sessionState.error) {
-		return (
-			<div className="min-h-screen flex justify-center p-4 pt-8">
-				<div className="text-center bg-white rounded-3xl shadow-xl p-8 max-w-md mb-auto">
-					<div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-						<span className="text-2xl text-red-600">!</span>
-					</div>
-					<h2 className="text-2xl font-bold text-gray-900 mb-4">
-						Quiz Unavailable
-					</h2>
-					<p className="text-gray-600 mb-6">{sessionState.error}</p>
-					<button
-						onClick={resetSession}
-						className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-200 text-lg cursor-pointer"
-					>
-						Try Again
-					</button>
-				</div>
-			</div>
-		);
-	}
 
 	// Loading state
 	if (sessionState.isLoading) {
@@ -229,10 +208,12 @@ export default function Quiz() {
 	}
 
 	return (
-		<GameProvider>
-			<TimerProvider>
-				<QuizContent />
-			</TimerProvider>
-		</GameProvider>
+		<ErrorBoundary fallback={QuizErrorFallback}>
+			<GameProvider>
+				<TimerProvider>
+					<QuizContent />
+				</TimerProvider>
+			</GameProvider>
+		</ErrorBoundary>
 	);
 }
