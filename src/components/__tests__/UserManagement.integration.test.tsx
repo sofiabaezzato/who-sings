@@ -1,9 +1,9 @@
 import { render, screen, cleanup, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { AuthProvider } from '../../contexts/AuthContext'
-import { GameDataProvider } from '../../contexts/GameDataContext'
 import { PlayerAuth } from '../PlayerAuth'
 import { useAuth } from '@/hooks/useAuth.ts'
+import { useAuthStore } from '@/stores/authStore'
+import { useGameDataStore } from '@/stores/gameDataStore'
 
 // Test component to access auth state
 function TestAuthDisplay() {
@@ -24,11 +24,9 @@ function TestAuthDisplay() {
 // Full app wrapper with all providers
 function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <GameDataProvider>
-        {children}
-      </GameDataProvider>
-    </AuthProvider>
+    <>
+      {children}
+    </>
   )
 }
 
@@ -36,6 +34,11 @@ describe('User Management Integration', () => {
   beforeEach(() => {
     // Clear localStorage before each test
     localStorage.clear()
+    
+    // Reset Zustand stores
+    useAuthStore.setState({ player: null, isLoggedIn: false })
+    useGameDataStore.setState({ allPlayers: [] })
+    
     cleanup()
   })
 
@@ -71,9 +74,10 @@ describe('User Management Integration', () => {
     
     // 4. Verify localStorage was updated
     await waitFor(() => {
-      const storedPlayer = localStorage.getItem('who-sings-current-player')
-      expect(storedPlayer).toBeTruthy()
-      expect(JSON.parse(storedPlayer!)).toMatchObject({
+      const storedAuth = localStorage.getItem('who-sings-auth')
+      expect(storedAuth).toBeTruthy()
+      const authData = JSON.parse(storedAuth!)
+      expect(authData.state.player).toMatchObject({
         name: 'TestUser',
         id: expect.any(String)
       })
@@ -87,7 +91,8 @@ describe('User Management Integration', () => {
     expect(screen.queryByTestId('welcome-message')).not.toBeInTheDocument()
     
     // 7. Verify localStorage was cleared
-    expect(localStorage.getItem('who-sings-current-player')).toBeNull()
+    const authData = localStorage.getItem('who-sings-auth')
+    expect(authData ? JSON.parse(authData).state.player : null).toBeNull()
     
     // 8. Unmount and re-mount (simulates page refresh/navigation)
     unmount()
@@ -194,10 +199,10 @@ describe('User Management Integration', () => {
     expect(screen.getByTestId('welcome-message')).toHaveTextContent('Welcome, User Two!')
     
     // Verify localStorage has the latest user
-    const storedPlayerData = localStorage.getItem('who-sings-current-player')
-    expect(storedPlayerData).toBeTruthy()
-    const storedPlayer = JSON.parse(storedPlayerData!)
-    expect(storedPlayer.name).toBe('User Two')
+    const storedAuth = localStorage.getItem('who-sings-auth')
+    expect(storedAuth).toBeTruthy()
+    const authData = JSON.parse(storedAuth!)
+    expect(authData.state.player.name).toBe('User Two')
   })
 
   it('should generate unique user IDs', async () => {
@@ -213,18 +218,18 @@ describe('User Management Integration', () => {
     await user.type(screen.getByLabelText(/how can we call you/i), 'User Alpha')
     await user.click(screen.getByRole('button', { name: /start playing/i }))
     
-    const firstPlayerData = localStorage.getItem('who-sings-current-player')
-    expect(firstPlayerData).toBeTruthy()
-    const firstUserId = JSON.parse(firstPlayerData!).id
+    const firstAuthData = localStorage.getItem('who-sings-auth')
+    expect(firstAuthData).toBeTruthy()
+    const firstUserId = JSON.parse(firstAuthData!).state.player.id
     
     // Logout and login second user
     await user.click(screen.getByTestId('logout-btn'))
     await user.type(screen.getByLabelText(/how can we call you/i), 'User Beta')
     await user.click(screen.getByRole('button', { name: /start playing/i }))
     
-    const secondPlayerData = localStorage.getItem('who-sings-current-player')
-    expect(secondPlayerData).toBeTruthy()
-    const secondUserId = JSON.parse(secondPlayerData!).id
+    const secondAuthData = localStorage.getItem('who-sings-auth')
+    expect(secondAuthData).toBeTruthy()
+    const secondUserId = JSON.parse(secondAuthData!).state.player.id
     
     // Should have different IDs
     expect(firstUserId).not.toBe(secondUserId)

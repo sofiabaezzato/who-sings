@@ -6,7 +6,7 @@ export function QuestionIndicators() {
 	return (
 		<div className="px-4 mt-3 bg-white">
 			<div className="flex justify-between gap-1">
-				{gameState.questions.map((_, index) => {
+				{gameState.questions.map((_: any, index: number) => {
 					const isAnswered = index < gameState.answers.length;
 					const isCorrect = isAnswered
 						? gameState.answers[index]?.isCorrect
