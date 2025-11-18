@@ -1,6 +1,6 @@
 import { Clock, Lightbulb, Play, Share, Trophy } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import QuizHeader from "@/components/QuizHeader";
+import QuizHeader from "../components/QuizHeader";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { ErrorBoundary, QuizErrorFallback } from "../components/ErrorBoundary";
 import { PlayerAuth } from "../components/PlayerAuth";
@@ -61,8 +61,7 @@ function QuizContent() {
 					<div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
 					<p className="text-gray-600">Loading quiz...</p>
 				</div>
-				<div className="min-h-screen flex justify-center pt-8">
-				</div>
+				<div className="min-h-screen flex justify-center pt-8"></div>
 			</div>
 		);
 	}
