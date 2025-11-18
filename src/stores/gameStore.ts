@@ -37,7 +37,7 @@ interface GameStore {
 	// Game state (for compatibility)
 	gameState: GameState
 	
-	// Computed properties
+	// Computed properties (stored in state for reactivity)
 	currentQuestion: Question | null
 	isLastQuestion: boolean
 	progress: number
@@ -75,29 +75,36 @@ const calculatePoints = (
 	return hintUsed ? Math.floor(totalPoints / 2) : totalPoints
 }
 
+const computeCurrentQuestion = (gameState: GameState): Question | null => {
+	if (gameState.currentQuestionIndex >= gameState.questions.length) {
+		return null
+	}
+	return gameState.questions[gameState.currentQuestionIndex]
+}
+
+const computeIsLastQuestion = (gameState: GameState): boolean => {
+	return gameState.currentQuestionIndex === gameState.questions.length - 1
+}
+
+const computeProgress = (gameState: GameState): number => {
+	if (gameState.questions.length === 0) return 0
+	return (gameState.currentQuestionIndex / gameState.questions.length) * 100
+}
+
+const updateComputedValues = (gameState: GameState) => ({
+	currentQuestion: computeCurrentQuestion(gameState),
+	isLastQuestion: computeIsLastQuestion(gameState),
+	progress: computeProgress(gameState),
+})
+
 export const useGameStore = create<GameStore>((set, get) => ({
 	// Game state
 	gameState: initialGameState,
 
-	// Computed properties
-	get currentQuestion() {
-		const { gameState } = get()
-		if (gameState.currentQuestionIndex >= gameState.questions.length) {
-			return null
-		}
-		return gameState.questions[gameState.currentQuestionIndex]
-	},
-
-	get isLastQuestion() {
-		const { gameState } = get()
-		return gameState.currentQuestionIndex === gameState.questions.length - 1
-	},
-
-	get progress() {
-		const { gameState } = get()
-		if (gameState.questions.length === 0) return 0
-		return (gameState.currentQuestionIndex / gameState.questions.length) * 100
-	},
+	// Computed properties (initialized)
+	currentQuestion: null,
+	isLastQuestion: false,
+	progress: 0,
 
 	// Actions
 	answerQuestion: (answer: string, timeRemaining: number, hintUsed = false) => {
@@ -117,13 +124,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
 			points,
 		}
 
-		set((state) => ({
-			gameState: {
+		set((state) => {
+			const newGameState = {
 				...state.gameState,
 				answers: [...state.gameState.answers, newAnswer],
 				totalScore: state.gameState.totalScore + points,
 			}
-		}))
+			
+			return {
+				gameState: newGameState,
+				...updateComputedValues(newGameState),
+			}
+		})
 	},
 
 	nextQuestion: () => {
@@ -131,19 +143,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
 			const nextIndex = state.gameState.currentQuestionIndex + 1
 			const isComplete = nextIndex >= state.gameState.questions.length
 
+			const newGameState = {
+				...state.gameState,
+				currentQuestionIndex: nextIndex,
+				isComplete,
+			}
+
 			return {
-				gameState: {
-					...state.gameState,
-					currentQuestionIndex: nextIndex,
-					isComplete,
-				}
+				gameState: newGameState,
+				...updateComputedValues(newGameState),
 			}
 		})
 	},
 
 	startNewGame: (questions: Question[]) => {
-		set({
-			gameState: {
+		set(() => {
+			const newGameState = {
 				questions,
 				currentQuestionIndex: 0,
 				answers: [],
@@ -151,10 +166,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
 				isComplete: false,
 				startTime: Date.now(),
 			}
+
+			return {
+				gameState: newGameState,
+				...updateComputedValues(newGameState),
+			}
 		})
 	},
 
 	resetGame: () => {
-		set({ gameState: initialGameState })
+		set(() => ({
+			gameState: initialGameState,
+			...updateComputedValues(initialGameState),
+		}))
 	},
 }))
