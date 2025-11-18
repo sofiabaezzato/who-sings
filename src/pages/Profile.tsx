@@ -10,16 +10,8 @@ export default function Profile() {
 	const { getPlayerHistory, getLeaderboard } = useGameData();
 
 	if (!player) {
-		return (
-			<div className="min-h-screen flex items-center justify-center p-4">
-				<div className="text-center">
-					<h2 className="text-2xl font-bold text-gray-900 mb-4">
-						Not logged in
-					</h2>
-					<p className="text-gray-600">Please log in to view your profile.</p>
-				</div>
-			</div>
-		);
+		navigate("/");
+		return null;
 	}
 
 	const gameHistory = getPlayerHistory(player.id);
@@ -52,8 +44,18 @@ export default function Profile() {
 		color?: string;
 	}) => {
 		const colorClasses = {
-			bg: color === 'orange' ? 'bg-orange-100' : color === 'blue' ? 'bg-blue-100' : 'bg-gray-100',
-			text: color === 'orange' ? 'text-orange-600' : color === 'blue' ? 'text-blue-600' : 'text-gray-600'
+			bg:
+				color === "orange"
+					? "bg-orange-100"
+					: color === "blue"
+						? "bg-blue-100"
+						: "bg-gray-100",
+			text:
+				color === "orange"
+					? "text-orange-600"
+					: color === "blue"
+						? "text-blue-600"
+						: "text-gray-600",
 		};
 
 		return (
@@ -76,7 +78,7 @@ export default function Profile() {
 			<div className="max-w-4xl mx-auto space-y-6">
 				{/* Header */}
 				<div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-					<div className="bg-orange-500 px-6 py-8 md:px-8 md:py-12">
+					<div className="bg-gradient-to-r from-orange-600 to-orange-500 px-6 py-8 md:px-8 md:py-12">
 						<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 							<div className="flex items-center gap-4">
 								<div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center">
@@ -157,7 +159,8 @@ export default function Profile() {
 											key={index}
 											className={cn(
 												"flex items-center justify-between py-4",
-												index !== gameHistory.slice(-10).length - 1 && "border-b border-gray-100"
+												index !== gameHistory.slice(-10).length - 1 &&
+													"border-b border-gray-100",
 											)}
 										>
 											<div className="flex items-center gap-4">

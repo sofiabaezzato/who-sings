@@ -1,15 +1,16 @@
 import { Clock, Lightbulb, Play, Share, Trophy } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import QuizHeader from "@/components/QuizHeader";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { ErrorBoundary, QuizErrorFallback } from "../components/ErrorBoundary";
 import { PlayerAuth } from "../components/PlayerAuth";
 import { QuizCard } from "../components/QuizCard";
 import { ShareCard } from "../components/ShareCard";
 import { TimerProvider } from "../contexts/TimerContext";
-import { useGameSession } from "../hooks/useGameSession";
-import { useTimer } from "../hooks/useTimer";
-import { useShareCard } from "../hooks/useShareCard";
 import { useGameData } from "../hooks/useGameData";
+import { useGameSession } from "../hooks/useGameSession";
+import { useShareCard } from "../hooks/useShareCard";
+import { useTimer } from "../hooks/useTimer";
 import { GAME_CONFIG } from "../utils/constants";
 
 function QuizContent() {
@@ -28,6 +29,12 @@ function QuizContent() {
 	const shareCardRef = useRef<HTMLDivElement>(null);
 	const nextQuestionRef = useRef(nextQuestion);
 
+	const handleShare = useCallback(() => {
+		if (shareCardRef.current) {
+			shareCard(shareCardRef.current);
+		}
+	}, [shareCard]);
+
 	// Update ref when nextQuestion changes
 	useEffect(() => {
 		nextQuestionRef.current = nextQuestion;
@@ -45,14 +52,16 @@ function QuizContent() {
 		}
 	}, [currentQuestion, gameState.isComplete, startTimer]);
 
-
 	// Loading state
 	if (sessionState.isLoading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center pt-8">
-				<div className="text-center bg-white rounded-3xl shadow-xl p-8">
+			<div className="flex flex-col items-center">
+				<QuizHeader />
+				<div className="flex-col items-center justify-center mx-auto text-center bg-white rounded-3xl shadow-xl p-8 mt-8">
 					<div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
 					<p className="text-gray-600">Loading quiz...</p>
+				</div>
+				<div className="min-h-screen flex justify-center pt-8">
 				</div>
 			</div>
 		);
@@ -60,18 +69,14 @@ function QuizContent() {
 
 	// Completion state
 	if (gameState.isComplete) {
-		const handleShare = () => {
-			if (shareCardRef.current) {
-				shareCard(shareCardRef.current);
-			}
-		};
-
 		// Calculate leaderboard position
 		const leaderboard = getLeaderboard();
-		const currentPlayerEntry = leaderboard.find(entry => entry.playerName === player?.name);
-		const leaderboardPosition = currentPlayerEntry ? 
-			leaderboard.findIndex(entry => entry.playerName === player?.name) + 1 : 
-			undefined;
+		const currentPlayerEntry = leaderboard.find(
+			(entry) => entry.playerName === player?.name,
+		);
+		const leaderboardPosition = currentPlayerEntry
+			? leaderboard.findIndex((entry) => entry.playerName === player?.name) + 1
+			: undefined;
 
 		return (
 			<div className="min-h-screen flex justify-center p-4 bg-gray-50 py-8">
@@ -80,7 +85,9 @@ function QuizContent() {
 						ref={shareCardRef}
 						playerName={player?.name || "Player"}
 						totalScore={gameState.totalScore}
-						correctAnswers={gameState.answers.filter((a: any) => a.isCorrect).length}
+						correctAnswers={
+							gameState.answers.filter((a: any) => a.isCorrect).length
+						}
 						totalQuestions={gameState.questions.length}
 						leaderboardPosition={leaderboardPosition}
 					/>
@@ -132,10 +139,8 @@ function QuizStartCard({ onStart }: { onStart: () => void }) {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<div className="w-full py-10 px-2 flex flex-col items-center justify-center text-center bg-gradient-to-r from-orange-500 to-orange-600">
-				<h1 className="text-4xl font-bold text-white mb-2">WHO SINGS?</h1>
-				<p className="text-gray-800 text-white font-semibold">Test your music knowledge</p>
-			</div>
+			<QuizHeader />
+
 			<div className="flex-1 flex justify-center p-4">
 				<div className="w-full max-w-md">
 					<div className="bg-white rounded-3xl shadow-xl p-8 text-center">

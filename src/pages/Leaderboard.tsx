@@ -1,12 +1,37 @@
 import { Award, Crown, Medal, Target, Trophy } from "lucide-react";
+import { useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useGameData } from "../hooks/useGameData";
 import { cn } from "../lib/utils";
 
 export default function Leaderboard() {
-	const { getLeaderboard } = useGameData();
+	const { allPlayers } = useGameData();
 	const { player } = useAuth();
-	const leaderboard = getLeaderboard();
+
+	const leaderboard = useMemo(
+		() =>
+			allPlayers
+				.map((player) => ({
+					playerName: player.name,
+					bestScore: Math.max(...player.gameHistory.map((g) => g.score), 0),
+					gamesPlayed: player.gameHistory.length,
+				}))
+				.filter((entry) => entry.gamesPlayed > 0)
+				.sort((a, b) => b.bestScore - a.bestScore),
+		[allPlayers],
+	);
+
+	const statistics = useMemo(
+		() => ({
+			totalPlayers: leaderboard.length,
+			topScore: leaderboard[0]?.bestScore || 0,
+			totalGamesPlayed: leaderboard.reduce(
+				(sum, entry) => sum + entry.gamesPlayed,
+				0,
+			),
+		}),
+		[leaderboard],
+	);
 
 	const getRankIcon = (rank: number) => {
 		switch (rank) {
@@ -41,10 +66,15 @@ export default function Leaderboard() {
 				<div
 					className={cn(
 						"bg-white rounded-t-3xl shadow-xl overflow-hidden",
-						leaderboard.length === 0 && "rounded-3xl mb-6"
+						leaderboard.length === 0 && "rounded-3xl mb-6",
 					)}
 				>
-					<div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-8 md:px-8 md:py-12">
+					<div className="bg-gradient-to-r from-orange-600 to-orange-500 px-6 py-8 md:px-8 md:py-12 relative">
+						<img
+							src="/image3.webp"
+							alt="Music cassette illustration"
+							className="absolute right-0 bottom-0 hidden sm:block max-w-[180px] md:max-w-[240px]"
+						/>
 						<div className="flex flex-col items-center text-center">
 							<div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center mb-4">
 								<Trophy className="w-8 h-8 md:w-10 md:h-10 text-orange-600" />
@@ -61,28 +91,25 @@ export default function Leaderboard() {
 					<div
 						className={cn(
 							"bg-white rounded-b-2xl shadow-lg p-6 mb-6",
-							leaderboard.length === 0 && "rounded-2xl"
+							leaderboard.length === 0 && "rounded-2xl",
 						)}
 					>
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
 							<div>
 								<div className="text-2xl font-bold text-orange-600">
-									{leaderboard.length}
+									{statistics.totalPlayers}
 								</div>
 								<div className="text-sm text-gray-600">Total Players</div>
 							</div>
 							<div>
 								<div className="text-2xl font-bold text-orange-600">
-									{leaderboard[0]?.bestScore || 0}
+									{statistics.topScore}
 								</div>
 								<div className="text-sm text-gray-600">Top Score</div>
 							</div>
 							<div>
 								<div className="text-2xl font-bold text-orange-600">
-									{leaderboard.reduce(
-										(sum, entry) => sum + entry.gamesPlayed,
-										0,
-									)}
+									{statistics.totalGamesPlayed}
 								</div>
 								<div className="text-sm text-gray-600">Games Played</div>
 							</div>
@@ -116,8 +143,9 @@ export default function Leaderboard() {
 										key={`${entry.playerName}-${rank}`}
 										className={cn(
 											"flex items-center justify-between py-4",
-											index !== leaderboard.length - 1 && "border-b border-gray-100",
-											isCurrentPlayer && "bg-orange-50 -mx-6 px-6 rounded-lg"
+											index !== leaderboard.length - 1 &&
+												"border-b border-gray-100",
+											isCurrentPlayer && "bg-orange-50 -mx-6 px-6 rounded-lg",
 										)}
 									>
 										<div className="flex items-center gap-4 flex-1">
@@ -125,7 +153,7 @@ export default function Leaderboard() {
 											<div
 												className={cn(
 													"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm",
-													getRankBadgeColor(rank)
+													getRankBadgeColor(rank),
 												)}
 											>
 												{rank <= 3 ? (
