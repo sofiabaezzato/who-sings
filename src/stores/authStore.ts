@@ -1,16 +1,16 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface AuthPlayer {
-	name: string
-	id: string
+	name: string;
+	id: string;
 }
 
 interface AuthStore {
-	player: AuthPlayer | null
-	isLoggedIn: boolean
-	login: (name: string, id: string) => void
-	logout: () => void
+	player: AuthPlayer | null;
+	isLoggedIn: boolean;
+	login: (name: string, id: string) => void;
+	logout: () => void;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -22,21 +22,21 @@ export const useAuthStore = create<AuthStore>()(
 				const authPlayer: AuthPlayer = {
 					name: name.trim(),
 					id,
-				}
-				set({ player: authPlayer, isLoggedIn: true })
+				};
+				set({ player: authPlayer, isLoggedIn: true });
 			},
 			logout: () => {
-				set({ player: null, isLoggedIn: false })
+				set({ player: null, isLoggedIn: false });
 			},
 		}),
 		{
-			name: 'who-sings-auth',
+			name: "who-sings-auth",
 			partialize: (state) => ({ player: state.player }),
 			onRehydrateStorage: () => (state) => {
 				if (state?.player) {
-					state.isLoggedIn = true
+					state.isLoggedIn = true;
 				}
 			},
-		}
-	)
-)
+		},
+	),
+);

@@ -1,10 +1,10 @@
 import { Clock, Lightbulb, Play, Share, Trophy } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import QuizHeader from "../components/QuizHeader";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { ErrorBoundary, QuizErrorFallback } from "../components/ErrorBoundary";
 import { PlayerAuth } from "../components/PlayerAuth";
 import { QuizCard } from "../components/QuizCard";
+import QuizHeader from "../components/QuizHeader";
 import { ShareCard } from "../components/ShareCard";
 import { TimerProvider } from "../contexts/TimerContext";
 import { useGameData } from "../hooks/useGameData";
@@ -84,9 +84,7 @@ function QuizContent() {
 						ref={shareCardRef}
 						playerName={player?.name || "Player"}
 						totalScore={gameState.totalScore}
-						correctAnswers={
-							gameState.answers.filter((a: any) => a.isCorrect).length
-						}
+						correctAnswers={gameState.answers.filter((a) => a.isCorrect).length}
 						totalQuestions={gameState.questions.length}
 						leaderboardPosition={leaderboardPosition}
 					/>

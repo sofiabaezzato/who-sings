@@ -1,5 +1,5 @@
 import { Menu, PlayCircle, Trophy, User, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,13 @@ export function Navigation() {
 	const mobileMenuRef = useRef<HTMLDivElement>(null);
 	const mobileButtonRef = useRef<HTMLDivElement>(null);
 
-	const navigationLinks = [
-		{ to: "/quiz", label: "Quiz", icon: PlayCircle },
-		{ to: "/leaderboard", label: "Leaderboard", icon: Trophy },
-	];
+	const navigationLinks = useMemo(
+		() => [
+			{ to: "/quiz", label: "Quiz", icon: PlayCircle },
+			{ to: "/leaderboard", label: "Leaderboard", icon: Trophy },
+		],
+		[],
+	);
 
 	// Close mobile menu when clicking outside
 	useEffect(() => {

@@ -33,7 +33,7 @@ export function QuizCard({ className = "" }: QuizCardProps) {
 		<div
 			className={cn(
 				"flex flex-col h-full max-w-lg mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden",
-				className
+				className,
 			)}
 		>
 			{/* Header with progress and timer */}

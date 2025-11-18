@@ -76,7 +76,7 @@ export function AnswerOptions({
 					disabled={showResult}
 					className={cn(
 						"w-full cursor-pointer p-4 rounded-xl font-medium border-2 transition-all duration-200 text-left disabled:cursor-default",
-						getButtonStyle(option)
+						getButtonStyle(option),
 					)}
 				>
 					<span className="block">{option}</span>
@@ -88,7 +88,9 @@ export function AnswerOptions({
 					<p
 						className={cn(
 							"font-medium",
-							selectedAnswer === correctAnswer ? "text-green-600" : "text-red-600"
+							selectedAnswer === correctAnswer
+								? "text-green-600"
+								: "text-red-600",
 						)}
 					>
 						{selectedAnswer === correctAnswer ? "Correct!" : "Wrong!"}

@@ -1,5 +1,5 @@
-import React from "react";
 import { AlertTriangle, Music } from "lucide-react";
+import React from "react";
 
 interface ErrorBoundaryState {
 	hasError: boolean;

@@ -1,16 +1,36 @@
 {
-  "functions": {
-    "api/tracks.ts": {
-      "runtime": "@vercel/node@5.5.6"
-    },
-    "api/snippet.ts": {
-      "runtime": "@vercel/node@5.5.6"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
-    }
-  ]
+	"functions": {
+		"api/tracks.ts": {
+			"runtime": "@vercel/node@5.5.6"
+		},
+		"api/snippet.ts": {
+			"runtime": "@vercel/node@5.5.6"
+		}
+	},
+	"rewrites": [
+		{
+			"source": "/((?!api/).*)",
+			"destination": "/index.html"
+		}
+	],
+	"headers": [
+		{
+			"source": "/(.*\\.(webp|png|jpg|jpeg|svg|ico))",
+			"headers": [
+				{
+					"key": "Cache-Control",
+					"value": "public, max-age=31536000, immutable"
+				}
+			]
+		},
+		{
+			"source": "/(.*\\.(js|css))",
+			"headers": [
+				{
+					"key": "Cache-Control",
+					"value": "public, max-age=31536000, immutable"
+				}
+			]
+		}
+	]
 }

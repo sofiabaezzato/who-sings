@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { usePlayerLogin } from "../hooks/usePlayerLogin";
+import QuizHeader from "./QuizHeader";
 
 interface PlayerAuthProps {
 	onAuthComplete?: () => void;
@@ -29,10 +30,8 @@ export function PlayerAuth({ onAuthComplete }: PlayerAuthProps) {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<div className="w-full py-10 px-2 flex flex-col items-center justify-center text-center bg-orange-500">
-				<h1 className="text-4xl font-bold text-gray-800 mb-2">WHO SINGS?</h1>
-				<p className="text-gray-800 font-semibold">Test your music knowledge</p>
-			</div>
+			<QuizHeader />
+
 			<div className="flex-1 flex justify-center p-4">
 				<div className="w-full max-w-md">
 					<div className="bg-white rounded-3xl shadow-xl p-8 text-center">

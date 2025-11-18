@@ -1,52 +1,56 @@
-import { create } from 'zustand'
-import { GAME_CONFIG } from '../utils/constants'
+import { create } from "zustand";
+import { GAME_CONFIG } from "../utils/constants";
 
 export interface Track {
-	trackId: number
-	trackName: string
-	artistId: number
-	artistName: string
+	trackId: number;
+	trackName: string;
+	artistId: number;
+	artistName: string;
 }
 
 export interface Question {
-	id: string
-	lyrics: string
-	correctArtist: string
-	options: string[]
-	track: Track
+	id: string;
+	lyrics: string;
+	correctArtist: string;
+	options: string[];
+	track: Track;
 }
 
 export interface QuizAnswer {
-	questionId: string
-	selectedAnswer: string
-	isCorrect: boolean
-	timeRemaining: number
-	points: number
+	questionId: string;
+	selectedAnswer: string;
+	isCorrect: boolean;
+	timeRemaining: number;
+	points: number;
 }
 
 export interface GameState {
-	questions: Question[]
-	currentQuestionIndex: number
-	answers: QuizAnswer[]
-	totalScore: number
-	isComplete: boolean
-	startTime: number
+	questions: Question[];
+	currentQuestionIndex: number;
+	answers: QuizAnswer[];
+	totalScore: number;
+	isComplete: boolean;
+	startTime: number;
 }
 
 interface GameStore {
 	// Game state (for compatibility)
-	gameState: GameState
-	
+	gameState: GameState;
+
 	// Computed properties (stored in state for reactivity)
-	currentQuestion: Question | null
-	isLastQuestion: boolean
-	progress: number
-	
+	currentQuestion: Question | null;
+	isLastQuestion: boolean;
+	progress: number;
+
 	// Actions
-	answerQuestion: (answer: string, timeRemaining: number, hintUsed?: boolean) => void
-	nextQuestion: () => void
-	resetGame: () => void
-	startNewGame: (questions: Question[]) => void
+	answerQuestion: (
+		answer: string,
+		timeRemaining: number,
+		hintUsed?: boolean,
+	) => void;
+	nextQuestion: () => void;
+	resetGame: () => void;
+	startNewGame: (questions: Question[]) => void;
 }
 
 const initialGameState: GameState = {
@@ -56,46 +60,46 @@ const initialGameState: GameState = {
 	totalScore: 0,
 	isComplete: false,
 	startTime: 0,
-}
+};
 
 const calculatePoints = (
 	isCorrect: boolean,
 	timeRemaining: number,
 	hintUsed = false,
 ): number => {
-	if (!isCorrect) return 0
+	if (!isCorrect) return 0;
 
-	const basePoints = GAME_CONFIG.BASE_POINTS
+	const basePoints = GAME_CONFIG.BASE_POINTS;
 	const timeBonus = Math.floor(
 		(timeRemaining / GAME_CONFIG.TIME_PER_QUESTION_S) *
 			(GAME_CONFIG.BASE_POINTS * GAME_CONFIG.TIME_BONUS_MULTIPLIER),
-	)
-	const totalPoints = basePoints + timeBonus
+	);
+	const totalPoints = basePoints + timeBonus;
 
-	return hintUsed ? Math.floor(totalPoints / 2) : totalPoints
-}
+	return hintUsed ? Math.floor(totalPoints / 2) : totalPoints;
+};
 
 const computeCurrentQuestion = (gameState: GameState): Question | null => {
 	if (gameState.currentQuestionIndex >= gameState.questions.length) {
-		return null
+		return null;
 	}
-	return gameState.questions[gameState.currentQuestionIndex]
-}
+	return gameState.questions[gameState.currentQuestionIndex];
+};
 
 const computeIsLastQuestion = (gameState: GameState): boolean => {
-	return gameState.currentQuestionIndex === gameState.questions.length - 1
-}
+	return gameState.currentQuestionIndex === gameState.questions.length - 1;
+};
 
 const computeProgress = (gameState: GameState): number => {
-	if (gameState.questions.length === 0) return 0
-	return (gameState.currentQuestionIndex / gameState.questions.length) * 100
-}
+	if (gameState.questions.length === 0) return 0;
+	return (gameState.currentQuestionIndex / gameState.questions.length) * 100;
+};
 
 const updateComputedValues = (gameState: GameState) => ({
 	currentQuestion: computeCurrentQuestion(gameState),
 	isLastQuestion: computeIsLastQuestion(gameState),
 	progress: computeProgress(gameState),
-})
+});
 
 export const useGameStore = create<GameStore>((set, get) => ({
 	// Game state
@@ -108,13 +112,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
 	// Actions
 	answerQuestion: (answer: string, timeRemaining: number, hintUsed = false) => {
-		const state = get()
-		const currentQuestion = state.currentQuestion
-		
-		if (!currentQuestion || state.gameState.isComplete) return
+		const state = get();
+		const currentQuestion = state.currentQuestion;
 
-		const isCorrect = answer === currentQuestion.correctArtist
-		const points = calculatePoints(isCorrect, timeRemaining, hintUsed)
+		if (!currentQuestion || state.gameState.isComplete) return;
+
+		const isCorrect = answer === currentQuestion.correctArtist;
+		const points = calculatePoints(isCorrect, timeRemaining, hintUsed);
 
 		const newAnswer: QuizAnswer = {
 			questionId: currentQuestion.id,
@@ -122,38 +126,38 @@ export const useGameStore = create<GameStore>((set, get) => ({
 			isCorrect,
 			timeRemaining,
 			points,
-		}
+		};
 
 		set((state) => {
 			const newGameState = {
 				...state.gameState,
 				answers: [...state.gameState.answers, newAnswer],
 				totalScore: state.gameState.totalScore + points,
-			}
-			
+			};
+
 			return {
 				gameState: newGameState,
 				...updateComputedValues(newGameState),
-			}
-		})
+			};
+		});
 	},
 
 	nextQuestion: () => {
 		set((state) => {
-			const nextIndex = state.gameState.currentQuestionIndex + 1
-			const isComplete = nextIndex >= state.gameState.questions.length
+			const nextIndex = state.gameState.currentQuestionIndex + 1;
+			const isComplete = nextIndex >= state.gameState.questions.length;
 
 			const newGameState = {
 				...state.gameState,
 				currentQuestionIndex: nextIndex,
 				isComplete,
-			}
+			};
 
 			return {
 				gameState: newGameState,
 				...updateComputedValues(newGameState),
-			}
-		})
+			};
+		});
 	},
 
 	startNewGame: (questions: Question[]) => {
@@ -165,19 +169,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
 				totalScore: 0,
 				isComplete: false,
 				startTime: Date.now(),
-			}
+			};
 
 			return {
 				gameState: newGameState,
 				...updateComputedValues(newGameState),
-			}
-		})
+			};
+		});
 	},
 
 	resetGame: () => {
 		set(() => ({
 			gameState: initialGameState,
 			...updateComputedValues(initialGameState),
-		}))
+		}));
 	},
-}))
+}));

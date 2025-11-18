@@ -17,6 +17,21 @@ export default defineConfig(({ mode }) => {
 				"@": path.resolve(__dirname, "./src"),
 			},
 		},
+		build: {
+			rollupOptions: {
+				output: {
+					assetFileNames: (assetInfo) => {
+						if (
+							assetInfo.name &&
+							/\.(png|jpe?g|webp|svg)$/.test(assetInfo.name)
+						) {
+							return "assets/images/[name]-[hash][extname]";
+						}
+						return "assets/[name]-[hash][extname]";
+					},
+				},
+			},
+		},
 		server: {
 			port: parseInt(PORT),
 			proxy: {

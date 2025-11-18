@@ -11,7 +11,7 @@ export const GAME_CONFIG = {
 // API configuration
 export const API_CONFIG = {
 	BASE_URL:
-		import.meta.env.VITE_API_BASE_URL || 
+		import.meta.env.VITE_API_BASE_URL ||
 		(import.meta.env.DEV ? "/api" : "/api"),
 	RATE_LIMIT_DELAY_MS: 200,
 	DEFAULT_COUNTRY: "it",
