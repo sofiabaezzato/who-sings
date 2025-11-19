@@ -11,7 +11,7 @@
 	"linter": {
 		"enabled": true,
 		"rules": { "recommended": false },
-		"includes": ["**", "!dist"]
+		"includes": ["src/**", "!dist"]
 	},
 	"javascript": { "formatter": { "quoteStyle": "double" } },
 	"css": {

@@ -56,7 +56,7 @@ export function useGameSession() {
 		if (gameState.isComplete && !saveAttemptedRef.current && player) {
 			saveAttemptedRef.current = true;
 
-			const saveGameResult = async () => {
+			const saveGameResult = () => {
 				try {
 					const totalTime = Math.round(
 						(Date.now() - gameState.startTime) / 1000,
@@ -116,7 +116,7 @@ export function useGameSession() {
 	}, [initializeGame]);
 
 	// Retry saving if it failed
-	const retrySave = useCallback(async () => {
+	const retrySave = useCallback(() => {
 		if (gameState.isComplete && player && sessionState.saveError) {
 			try {
 				const totalTime = Math.round((Date.now() - gameState.startTime) / 1000);

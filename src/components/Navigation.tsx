@@ -31,10 +31,8 @@ export function Navigation() {
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
 			const target = event.target as Node;
-			const isInsideMenu =
-				mobileMenuRef.current && mobileMenuRef.current.contains(target);
-			const isInsideButton =
-				mobileButtonRef.current && mobileButtonRef.current.contains(target);
+			const isInsideMenu = mobileMenuRef.current?.contains(target);
+			const isInsideButton = mobileButtonRef.current?.contains(target);
 
 			if (!isInsideMenu && !isInsideButton) {
 				setIsMobileMenuOpen(false);

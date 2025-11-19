@@ -7,8 +7,8 @@ describe("Utils", () => {
 	});
 
 	it("should handle conditional classes", () => {
-		expect(cn("base", false && "conditional")).toBe("base");
-		expect(cn("base", true && "conditional")).toContain("conditional");
+		expect(cn("base", undefined)).toBe("base");
+		expect(cn("base", "conditional")).toContain("conditional");
 	});
 
 	it("should handle undefined classes", () => {

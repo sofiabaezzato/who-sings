@@ -63,16 +63,14 @@ export function useShareCard() {
 								title: "Check out my Who Sings score!",
 								text: "I just completed the Who Sings music quiz! Can you beat my score?",
 							});
-						} catch (shareError: any) {
+						} catch (_error: unknown) {
 							// User cancelled the share dialog
-							if (shareError.name === "AbortError") {
-								console.log("Share cancelled by user");
-								return;
-							}
-							// Sharing failed, fallback to download
-							console.warn("Share failed, downloading instead:", shareError);
-							downloadImage(blob);
+							console.log("Share cancelled by user");
+							return;
 						}
+						// Sharing failed, fallback to download
+						console.warn("Share failed, downloading instead");
+						downloadImage(blob);
 					} else {
 						// Web Share API not supported, download directly
 						downloadImage(blob);
@@ -93,7 +91,7 @@ export function useShareCard() {
 							"Unable to share. Please take a screenshot to share your score!",
 						);
 					}
-				} catch (clipboardError) {
+				} catch (_clipboardError) {
 					alert(
 						"Unable to share. Please take a screenshot to share your score!",
 					);

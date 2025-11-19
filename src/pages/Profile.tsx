@@ -1,4 +1,11 @@
-import { Clock, Hash, LogOut, TrendingUp, Trophy } from "lucide-react";
+import {
+	Clock,
+	Hash,
+	LogOut,
+	type LucideIcon,
+	TrendingUp,
+	Trophy,
+} from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useGameData } from "../hooks/useGameData";
@@ -38,7 +45,7 @@ export default function Profile() {
 		value,
 		color = "orange",
 	}: {
-		icon: any;
+		icon: LucideIcon;
 		label: string;
 		value: string | number;
 		color?: string;

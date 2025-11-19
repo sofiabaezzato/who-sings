@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { useGame } from "../hooks/useGame";
+import type { Question } from "../stores/gameStore";
 
 function QuestionIndicatorsComponent() {
 	const { gameState } = useGame();
@@ -7,7 +8,7 @@ function QuestionIndicatorsComponent() {
 	return (
 		<div className="px-4 mt-3 bg-white">
 			<div className="flex justify-between gap-1">
-				{gameState.questions.map((question: any, index: number) => {
+				{gameState.questions.map((question: Question, index: number) => {
 					const answer = gameState.answers.find(
 						(a) => a.questionId === question.id,
 					);

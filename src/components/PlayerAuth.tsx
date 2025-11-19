@@ -11,7 +11,7 @@ export function PlayerAuth({ onAuthComplete }: PlayerAuthProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const { handleLogin } = usePlayerLogin();
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 
 		if (!name.trim()) return;
