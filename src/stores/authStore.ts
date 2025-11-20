@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useGameStore } from "./gameStore";
 
 export interface AuthPlayer {
 	name: string;
@@ -27,6 +28,8 @@ export const useAuthStore = create<AuthStore>()(
 			},
 			logout: () => {
 				set({ player: null, isLoggedIn: false });
+				// Reset game state when logging out to prevent stale game data
+				useGameStore.getState().resetGame();
 			},
 		}),
 		{

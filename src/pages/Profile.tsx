@@ -6,6 +6,7 @@ import {
 	TrendingUp,
 	Trophy,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useGameData } from "../hooks/useGameData";
@@ -16,8 +17,13 @@ export default function Profile() {
 	const { player, logout } = useAuth();
 	const { getPlayerHistory, getLeaderboard } = useGameData();
 
+	useEffect(() => {
+		if (!player) {
+			navigate("/");
+		}
+	}, [player, navigate]);
+
 	if (!player) {
-		navigate("/");
 		return null;
 	}
 
