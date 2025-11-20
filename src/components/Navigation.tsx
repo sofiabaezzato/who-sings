@@ -1,13 +1,6 @@
 import { Menu, PlayCircle, Trophy, User, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-import { Button } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -81,32 +74,39 @@ export function Navigation() {
 					})}
 				</div>
 
-				{/* Desktop Profile Dropdown - Right */}
+				{/* Desktop Profile Menu - Right */}
 				<div className="hidden md:flex items-center">
 					{isLoggedIn && (
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<button className="flex items-center space-x-2 px-5 py-3 rounded-full transition-colors text-md font-semibold text-gray-800 hover:text-gray-900 hover:bg-neutral-100 cursor-pointer">
-									<User className="w-6 h-6" />
-									<span>{player?.name}</span>
-								</button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								<DropdownMenuItem asChild>
-									<Link to="/profile">Profile</Link>
-								</DropdownMenuItem>
-								<DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
+						<div className="relative group">
+							<button className="flex items-center space-x-2 px-5 py-3 rounded-full transition-colors text-md font-semibold text-gray-800 hover:text-gray-900 hover:bg-neutral-100 cursor-pointer">
+								<User className="w-6 h-6" />
+								<span>{player?.name}</span>
+							</button>
+							<div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+								<div className="py-1">
+									<Link 
+										to="/profile" 
+										className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+									>
+										Profile
+									</Link>
+									<button
+										onClick={logout}
+										className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+									>
+										Logout
+									</button>
+								</div>
+							</div>
+						</div>
 					)}
 				</div>
 
 				{/* Mobile Menu Button */}
 				<div ref={mobileButtonRef} className="md:hidden">
-					<Button
-						variant="ghost"
-						className="rounded-full h-10 w-10"
-						size="lg"
+					<button
+						type="button"
+						className="rounded-full h-10 w-10 inline-flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
 						onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 					>
 						{isMobileMenuOpen ? (
@@ -114,7 +114,7 @@ export function Navigation() {
 						) : (
 							<Menu className="w-8 h-8" />
 						)}
-					</Button>
+					</button>
 				</div>
 			</div>
 

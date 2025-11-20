@@ -71,23 +71,18 @@ VITE_API_KEY=your_api_key_here
 ```
 src/
 ├── components/          # Reusable UI components
-│   ├── ui/              # Base UI components (Radix)
-│   ├── Navigation.tsx   # App navigation
-│   ├── QuizCard.tsx     # Quiz interface
-│   └── ShareCard.tsx    # Social sharing
+│   └── __tests__/       # Component integration tests
 ├── pages/               # Route components
-│   ├── Home.tsx         # Landing/quiz page
-│   ├── Quiz.tsx         # Quiz gameplay
-│   ├── Profile.tsx      # User profile
-│   └── Leaderboard.tsx  # Rankings display
+├── contexts/            # React Context providers
 ├── stores/              # Zustand state stores
-│   ├── authStore.ts     # Authentication
-│   ├── gameStore.ts     # Game state
-│   └── leaderboardStore.ts # Scores
 ├── hooks/               # Custom React hooks
 ├── services/            # API services
-│   └── musixmatch.ts    # API client
+│   └── __tests__/       # Service tests and fixtures
 ├── utils/               # Utility functions
+│   └── __tests__/       # Utility tests
+├── lib/                 # Library utilities
+│   └── __tests__/       # Library tests
+├── test/                # Test configuration
 └── types/               # TypeScript definitions
 ```
 
