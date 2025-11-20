@@ -65,9 +65,9 @@ export const mockSnippetResponse = {
 					"I'm in love with the shape of you\nWe push and pull like a magnet do\nAlthough my heart is falling too\nI'm in love with your body",
 				region_restriction: {
 					allowed: ["IT", "US", "UK"],
-					blocked: []
+					blocked: [],
 				},
-				restricted: 0
+				restricted: 0,
 			},
 		},
 	},
@@ -85,9 +85,9 @@ export const mockSnippetWithAsterisks = {
 					"***This is copyrighted content*** I'm in love with the shape of you ***End copyright***",
 				region_restriction: {
 					allowed: ["IT", "XW"],
-					blocked: []
+					blocked: [],
 				},
-				restricted: 0
+				restricted: 0,
 			},
 		},
 	},
@@ -104,9 +104,9 @@ export const mockEmptySnippetResponse = {
 				snippet_body: "",
 				region_restriction: {
 					allowed: ["IT"],
-					blocked: []
+					blocked: [],
 				},
-				restricted: 0
+				restricted: 0,
 			},
 		},
 	},
@@ -123,9 +123,9 @@ export const mockRestrictedSnippetResponse = {
 				snippet_body: "Restricted content that should not be returned",
 				region_restriction: {
 					allowed: ["US"],
-					blocked: ["IT"]
+					blocked: ["IT"],
 				},
-				restricted: 0
+				restricted: 0,
 			},
 		},
 	},
@@ -142,9 +142,9 @@ export const mockGloballyRestrictedSnippetResponse = {
 				snippet_body: "",
 				region_restriction: {
 					allowed: [],
-					blocked: ["XW"]
+					blocked: ["XW"],
 				},
-				restricted: 1
+				restricted: 1,
 			},
 		},
 	},

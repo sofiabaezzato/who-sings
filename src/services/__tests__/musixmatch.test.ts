@@ -1,3 +1,4 @@
+import { GAME_CONFIG } from "@/utils/constants.ts";
 import {
 	generateQuizQuestions,
 	getPopularTracks,
@@ -13,7 +14,6 @@ import {
 	mockTracksResponse,
 	mockTransformedTracks,
 } from "./fixtures/musixmatch-responses";
-import {GAME_CONFIG} from "@/utils/constants.ts";
 
 vi.stubGlobal("fetch", vi.fn());
 

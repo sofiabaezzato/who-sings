@@ -57,13 +57,14 @@ async function apiCall<T>(
 }
 
 // Get popular tracks with lyrics
-export async function getPopularTracks(limit = 50): Promise<Array<{
-	trackId: number;
-	trackName: string;
-	artistId: number;
-	artistName: string;
-}>> {
-	
+export async function getPopularTracks(limit = 50): Promise<
+	Array<{
+		trackId: number;
+		trackName: string;
+		artistId: number;
+		artistName: string;
+	}>
+> {
 	const data = await apiCall<{ track_list: MusixmatchTrack[] }>(
 		"chart.tracks.get",
 		{
@@ -86,19 +87,16 @@ export async function getPopularTracks(limit = 50): Promise<Array<{
 
 // Get lyrics snippet for a specific track
 export async function getTrackSnippet(trackId: number) {
-	const data = await apiCall<{ 
-		snippet: { 
+	const data = await apiCall<{
+		snippet: {
 			snippet_body: string;
 			region_restriction?: {
 				allowed?: string[];
 				blocked?: string[];
 			};
 			restricted?: number;
-		} 
-	}>(
-		"track.snippet.get",
-		{ track_id: trackId.toString() },
-	);
+		};
+	}>("track.snippet.get", { track_id: trackId.toString() });
 
 	const snippet = data.snippet;
 	if (!snippet) return null;
@@ -107,11 +105,21 @@ export async function getTrackSnippet(trackId: number) {
 	const regionRestriction = snippet.region_restriction;
 	if (regionRestriction) {
 		// If allowed list exists and current country or worldwide are in it, add snippet
-		if (regionRestriction.allowed?.includes(API_CONFIG.DEFAULT_COUNTRY_COPYRIGHT) || regionRestriction.allowed?.includes("XW")) {
+		if (
+			regionRestriction.allowed?.includes(
+				API_CONFIG.DEFAULT_COUNTRY_COPYRIGHT,
+			) ||
+			regionRestriction.allowed?.includes("XW")
+		) {
 			return snippet.snippet_body || "";
 		}
 		// If blocked list exists and current country or worldwide are in it, skip
-		if (regionRestriction.blocked?.includes(API_CONFIG.DEFAULT_COUNTRY_COPYRIGHT) || regionRestriction.blocked?.includes("XW")) {
+		if (
+			regionRestriction.blocked?.includes(
+				API_CONFIG.DEFAULT_COUNTRY_COPYRIGHT,
+			) ||
+			regionRestriction.blocked?.includes("XW")
+		) {
 			return null;
 		}
 	}
@@ -209,9 +217,7 @@ export async function generateQuizQuestions(
 	}
 
 	if (questions.length < questionCount) {
-		throw new Error(
-			`Only ${questions.length} questions available.`,
-		);
+		throw new Error(`Only ${questions.length} questions available.`);
 	}
 
 	return questions;
