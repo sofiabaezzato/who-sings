@@ -16,7 +16,6 @@ Who Sings is a quiz game where players identify artists from lyric excerpts. The
 
 ### Styling & UI
 - **Tailwind CSS 4.1.17** - Utility-first styling framework
-- **Radix UI** - Accessible component primitives
 - **Lucide React** - Modern icon library
 - **CSS Variables** - Custom theming and orange accent colors
 
@@ -45,8 +44,7 @@ cd who-sings
 npm install
 
 # Configure environment
-cp .env.local
-# Add your Musixmatch API key to .env
+touch .env.local # Add your Musixmatch API key
 
 # Start development server
 npm run dev
