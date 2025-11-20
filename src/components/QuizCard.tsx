@@ -19,7 +19,7 @@ export function QuizCard({ className = "" }: QuizCardProps) {
 	// Reset hint when question changes
 	useEffect(() => {
 		setHintUsed(false);
-	}, []);
+	}, [currentQuestion]);
 
 	if (!currentQuestion) {
 		return (

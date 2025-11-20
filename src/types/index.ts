@@ -17,9 +17,7 @@ export interface MusixmatchTrack {
 		track_name: string;
 		artist_id: number;
 		artist_name: string;
-		album_name?: string;
-		album_coverart_100x100?: string;
 		has_lyrics: number;
-		track_rating?: number;
+		restricted?: number;
 	};
 }

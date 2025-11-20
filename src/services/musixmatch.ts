@@ -17,11 +17,11 @@ async function apiCall<T>(
 	let url: URL;
 
 	if (import.meta.env.DEV) {
-		// Development: use Vite proxy
+		// Development: Vite proxy
 		url = new URL(`${window.location.origin}${BASE_URL}/${endpoint}`);
 		// API key injected by Vite proxy
 	} else {
-		// Production: use serverless functions
+		// Production: serverless functions
 		const functionPath = endpointMap[endpoint];
 		if (!functionPath) {
 			throw new Error(`Unsupported endpoint: ${endpoint}`);
@@ -57,41 +57,74 @@ async function apiCall<T>(
 }
 
 // Get popular tracks with lyrics
-export async function getPopularTracks(limit = 50) {
+export async function getPopularTracks(limit = 50): Promise<Array<{
+	trackId: number;
+	trackName: string;
+	artistId: number;
+	artistName: string;
+}>> {
+	
 	const data = await apiCall<{ track_list: MusixmatchTrack[] }>(
 		"chart.tracks.get",
 		{
 			country: API_CONFIG.DEFAULT_COUNTRY,
 			page_size: limit.toString(),
 			f_has_lyrics: "1",
-			chart_name: "mxmweekly", // chart: most viewed lyrics in the last 7 days
+			chart_name: "mxmweekly",
 		},
 	);
 
-	return data.track_list.map((item) => ({
+	const tracks = data.track_list.map((item) => ({
 		trackId: item.track.track_id,
 		trackName: item.track.track_name,
 		artistId: item.track.artist_id,
 		artistName: item.track.artist_name,
-		albumCoverArt: item.track.album_coverart_100x100,
 	}));
+
+	return tracks.slice(0, limit);
 }
 
 // Get lyrics snippet for a specific track
 export async function getTrackSnippet(trackId: number) {
-	const data = await apiCall<{ snippet: { snippet_body: string } }>(
+	const data = await apiCall<{ 
+		snippet: { 
+			snippet_body: string;
+			region_restriction?: {
+				allowed?: string[];
+				blocked?: string[];
+			};
+			restricted?: number;
+		} 
+	}>(
 		"track.snippet.get",
 		{ track_id: trackId.toString() },
 	);
 
-	return data.snippet?.snippet_body || "";
+	const snippet = data.snippet;
+	if (!snippet) return null;
+
+	// Check if track is restricted in current country
+	const regionRestriction = snippet.region_restriction;
+	if (regionRestriction) {
+		// If allowed list exists and current country or worldwide are in it, add snippet
+		if (regionRestriction.allowed?.includes(API_CONFIG.DEFAULT_COUNTRY_COPYRIGHT) || regionRestriction.allowed?.includes("XW")) {
+			return snippet.snippet_body || "";
+		}
+		// If blocked list exists and current country or worldwide are in it, skip
+		if (regionRestriction.blocked?.includes(API_CONFIG.DEFAULT_COUNTRY_COPYRIGHT) || regionRestriction.blocked?.includes("XW")) {
+			return null;
+		}
+	}
+
+	return snippet.snippet_body || "";
 }
 
 // Generate quiz questions using lyric snippets
 export async function generateQuizQuestions(
 	questionCount: number = GAME_CONFIG.QUESTIONS_PER_GAME,
 ): Promise<Question[]> {
-	const tracks = await getPopularTracks(questionCount * 5);
+	// Start with more tracks to account for filtering
+	const tracks = await getPopularTracks(API_CONFIG.DEFAULT_PAGE_SIZE);
 
 	if (tracks.length < questionCount) {
 		throw new Error("Not enough tracks available from Musixmatch API");
@@ -135,9 +168,9 @@ export async function generateQuizQuestions(
 					artist !== availableTrack.artistName && !usedArtists.has(artist),
 			)
 			.sort(() => Math.random() - 0.5)
-			.slice(0, 3);
+			.slice(0, GAME_CONFIG.ANSWER_OPTIONS_COUNT - 1);
 
-		if (wrongArtists.length < 3) {
+		if (wrongArtists.length < GAME_CONFIG.ANSWER_OPTIONS_COUNT - 1) {
 			tracks.splice(tracks.indexOf(availableTrack), 1);
 			i--;
 			continue;
@@ -177,7 +210,7 @@ export async function generateQuizQuestions(
 
 	if (questions.length < questionCount) {
 		throw new Error(
-			`Only ${questions.length} questions available. Need API key for full quiz experience.`,
+			`Only ${questions.length} questions available.`,
 		);
 	}
 

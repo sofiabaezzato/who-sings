@@ -6,13 +6,15 @@ import {
 import {
 	mockApiErrorResponse,
 	mockEmptySnippetResponse,
+	mockGloballyRestrictedSnippetResponse,
+	mockRestrictedSnippetResponse,
 	mockSnippetResponse,
 	mockSnippetWithAsterisks,
 	mockTracksResponse,
 	mockTransformedTracks,
 } from "./fixtures/musixmatch-responses";
+import {GAME_CONFIG} from "@/utils/constants.ts";
 
-// Mock fetch using Vitest's global stubbing
 vi.stubGlobal("fetch", vi.fn());
 
 // Mock environment
@@ -113,6 +115,28 @@ describe("Musixmatch Service", () => {
 			expect(result).toBe("");
 		});
 
+		it("should return null for IT-restricted tracks", async () => {
+			vi.mocked(fetch).mockResolvedValue({
+				ok: true,
+				json: () => Promise.resolve(mockRestrictedSnippetResponse),
+			} as Response);
+
+			const result = await getTrackSnippet(123456);
+
+			expect(result).toBe(null);
+		});
+
+		it("should return null for globally restricted tracks", async () => {
+			vi.mocked(fetch).mockResolvedValue({
+				ok: true,
+				json: () => Promise.resolve(mockGloballyRestrictedSnippetResponse),
+			} as Response);
+
+			const result = await getTrackSnippet(123456);
+
+			expect(result).toBe(null);
+		});
+
 		it("should handle malformed response", async () => {
 			vi.mocked(fetch).mockResolvedValue({
 				ok: true,
@@ -127,7 +151,7 @@ describe("Musixmatch Service", () => {
 
 			const result = await getTrackSnippet(123456);
 
-			expect(result).toBe("");
+			expect(result).toBe(null);
 		});
 	});
 
@@ -161,8 +185,8 @@ describe("Musixmatch Service", () => {
 				},
 			});
 
-			// Each question should have 4 options
-			expect(result[0].options).toHaveLength(4);
+			// Each question should have right amount of options
+			expect(result[0].options).toHaveLength(GAME_CONFIG.ANSWER_OPTIONS_COUNT);
 
 			// Options should include the correct artist
 			expect(result[0].options).toContain(result[0].correctArtist);
@@ -187,17 +211,21 @@ describe("Musixmatch Service", () => {
 			expect(result[0].lyrics).not.toContain("***");
 		});
 
-		it("should skip tracks with empty snippets", async () => {
+		it("should skip tracks with empty or restricted snippets", async () => {
 			// Mock tracks response with multiple tracks
 			vi.mocked(fetch)
 				.mockResolvedValueOnce({
 					ok: true,
 					json: () => Promise.resolve(mockTracksResponse),
 				} as Response)
-				// First snippet is empty, second is valid
+				// First snippet is empty, second is restricted, third is valid
 				.mockResolvedValueOnce({
 					ok: true,
 					json: () => Promise.resolve(mockEmptySnippetResponse),
+				} as Response)
+				.mockResolvedValueOnce({
+					ok: true,
+					json: () => Promise.resolve(mockRestrictedSnippetResponse),
 				} as Response)
 				.mockResolvedValue({
 					ok: true,
@@ -251,10 +279,10 @@ describe("Musixmatch Service", () => {
 					ok: true,
 					json: () => Promise.resolve(mockTracksResponse),
 				} as Response)
-				// All snippets are empty
+				// All snippets are restricted
 				.mockResolvedValue({
 					ok: true,
-					json: () => Promise.resolve(mockEmptySnippetResponse),
+					json: () => Promise.resolve(mockRestrictedSnippetResponse),
 				} as Response);
 
 			await expect(generateQuizQuestions(1)).rejects.toThrow(

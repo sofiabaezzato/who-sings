@@ -1,6 +1,7 @@
 // Game configuration
 export const GAME_CONFIG = {
 	QUESTIONS_PER_GAME: 10,
+	ANSWER_OPTIONS_COUNT: 3,
 	TIME_PER_QUESTION_S: 20,
 	BASE_POINTS: 100,
 	TIME_BONUS_MULTIPLIER: 0.5,
@@ -15,5 +16,6 @@ export const API_CONFIG = {
 		(import.meta.env.DEV ? "/api" : "/api"),
 	RATE_LIMIT_DELAY_MS: 200,
 	DEFAULT_COUNTRY: "it",
-	DEFAULT_PAGE_SIZE: 50,
+	DEFAULT_COUNTRY_COPYRIGHT: "IT",
+	DEFAULT_PAGE_SIZE: 100,
 } as const;

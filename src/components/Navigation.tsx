@@ -1,7 +1,6 @@
 import { Menu, PlayCircle, Trophy, User, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -53,7 +52,7 @@ export function Navigation() {
 				{/* Logo - Left */}
 				<Link to="/" className="flex items-center space-x-2">
 					<img
-						src={logo}
+						src="/logo.png"
 						alt="Musixmatch"
 						className="h-10 w-auto flex-shrink-0"
 					/>

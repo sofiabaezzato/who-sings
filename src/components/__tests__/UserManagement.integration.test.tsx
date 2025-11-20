@@ -40,7 +40,7 @@ describe("User Management Integration", () => {
 		cleanup();
 	});
 
-	it("should handle complete login → logout → persistence flow", async () => {
+	it("should handle complete login -> logout -> persistence flow", async () => {
 		const user = userEvent.setup();
 
 		// 1. Initial render - should show login form
