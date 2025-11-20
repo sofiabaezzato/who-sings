@@ -145,7 +145,7 @@ export async function generateQuizQuestions(
 	// Shuffle tracks to get random order each time
 	tracks.sort(() => Math.random() - 0.5);
 
-	for (let i = 0; i < questionCount && tracks.length > 0; i++) {
+	for (let i = 0, attempts = 0; i < questionCount && tracks.length > 0 && attempts < 100; attempts++) {
 		const availableTrack = tracks.find(
 			(track) => !usedArtists.has(track.artistName),
 		);
@@ -155,7 +155,6 @@ export async function generateQuizQuestions(
 
 		if (!snippet || snippet.length < 10) {
 			tracks.splice(tracks.indexOf(availableTrack), 1);
-			i--;
 			continue;
 		}
 
@@ -166,7 +165,6 @@ export async function generateQuizQuestions(
 
 		if (!cleanSnippet) {
 			tracks.splice(tracks.indexOf(availableTrack), 1);
-			i--;
 			continue;
 		}
 
@@ -180,7 +178,6 @@ export async function generateQuizQuestions(
 
 		if (wrongArtists.length < GAME_CONFIG.ANSWER_OPTIONS_COUNT - 1) {
 			tracks.splice(tracks.indexOf(availableTrack), 1);
-			i--;
 			continue;
 		}
 
@@ -202,6 +199,7 @@ export async function generateQuizQuestions(
 		});
 
 		usedArtists.add(availableTrack.artistName);
+		i++;
 
 		if (i < questionCount - 1) {
 			await new Promise((resolve) =>
