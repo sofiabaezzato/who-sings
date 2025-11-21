@@ -30,7 +30,7 @@ export function useShareCard() {
 					return;
 				}
 
-				console.log("Capturing card element:", cardElement);
+				// console.log("Capturing card element:", cardElement);
 
 				// Generate canvas from the card element
 				const canvas = await html2canvas(cardElement, {

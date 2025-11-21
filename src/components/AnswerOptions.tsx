@@ -35,7 +35,6 @@ export function AnswerOptions({
 
 			// Save game result if this is the last question
 			if (isLastQuestion && !sessionState.isSaved) {
-				console.log("Last question answered, saving game result...");
 				setTimeout(() => {
 					saveGameResult();
 				}, 100); // Small delay to ensure game state updates

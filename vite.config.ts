@@ -46,7 +46,7 @@ export default defineConfig(({ mode }) => {
 								const url = new URL(req.url!, "http://localhost");
 								url.searchParams.set("apikey", API_KEY);
 								proxyReq.path = url.pathname + url.search;
-								console.log(proxyReq.path);
+								// console.log(proxyReq.path);
 							},
 						);
 					},
