@@ -94,30 +94,34 @@ const QuizContent = memo(function QuizContent() {
 
 		return (
 			<div className="min-h-screen flex justify-center p-4 bg-gray-50 py-8">
-				<div className="w-full max-w-md">
-					<ShareCard
-						ref={shareCardRef}
-						playerName={player?.name || "Player"}
-						totalScore={gameState.totalScore}
-						correctAnswers={gameState.answers.filter((a) => a.isCorrect).length}
-						totalQuestions={gameState.questions.length}
-						leaderboardPosition={leaderboardPosition}
-					/>
+				<div className="w-full max-w-6xl">
+					<div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 justify-center">
+						<div className="flex-shrink-0">
+							<ShareCard
+								ref={shareCardRef}
+								playerName={player?.name || "Player"}
+								totalScore={gameState.totalScore}
+								correctAnswers={gameState.answers.filter((a) => a.isCorrect).length}
+								totalQuestions={gameState.questions.length}
+								leaderboardPosition={leaderboardPosition}
+							/>
+						</div>
 
-					<div className="flex gap-4 mt-6">
-						<button
-							onClick={handleShare}
-							className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-200 text-lg cursor-pointer flex items-center justify-center gap-2"
-						>
-							<Share className="h-5 w-5" />
-							Share
-						</button>
-						<button
-							onClick={resetSession}
-							className="flex-1 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-6 rounded-full transition-colors duration-200 text-lg cursor-pointer border border-gray-200"
-						>
-							Play Again
-						</button>
+						<div className="flex flex-row lg:flex-col gap-4 w-full lg:w-auto lg:min-w-[200px]  justify-center">
+							<button
+								onClick={handleShare}
+								className="flex-1 max-w-48 lg:flex-none bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-200 text-lg cursor-pointer flex items-center justify-center gap-2"
+							>
+								<Share className="h-5 w-5" />
+								Share
+							</button>
+							<button
+								onClick={resetSession}
+								className="flex-1 max-w-48 lg:flex-none bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-6 rounded-full transition-colors duration-200 text-lg cursor-pointer border border-gray-200"
+							>
+								Play Again
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
