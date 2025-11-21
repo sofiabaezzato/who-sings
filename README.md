@@ -11,7 +11,7 @@ Who Sings is a quiz game where players identify artists from lyric excerpts. The
 ### Frontend
 - **React 19.2.0** - Component framework with latest features
 - **TypeScript 5.9.3** - Type-safe development with strict mode
-- **Zustand 5.0.2** - Lightweight state management
+- **Zustand 5.0.8** - Lightweight state management
 - **React Router 7.9.6** - Client-side routing and navigation
 
 ### Styling & UI
