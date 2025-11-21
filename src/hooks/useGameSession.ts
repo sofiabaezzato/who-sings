@@ -11,7 +11,7 @@ interface GameSessionState {
 }
 
 export function useGameSession() {
-	const { gameState, currentQuestion, startNewGame, resetGame, ...gameActions } =
+	const { gameState, currentQuestion, startNewGame, ...gameActions } =
 		useGame();
 	const { addGameResult } = useGameData();
 	const { player } = useAuth();
@@ -23,14 +23,15 @@ export function useGameSession() {
 	});
 	const [isInitialized, setIsInitialized] = useState(false);
 
-
 	// Initialize game session
 	const initializeGame = useCallback(async () => {
-		console.log("Initialize Game Called")
+		console.log("Initialize Game Called");
 
 		if (isInitialized || gameState.questions.length > 0) {
 			console.log("Initialize Game Skipped:", {
-				reason: isInitialized ? "already initialized" : "game already has questions"
+				reason: isInitialized
+					? "already initialized"
+					: "game already has questions",
 			});
 			return;
 		}
@@ -41,7 +42,9 @@ export function useGameSession() {
 			const questions = await generateQuizQuestions();
 			setIsInitialized(true);
 
-			console.log("Generated questions, calling startNewGame...", { questionsCount: questions.length });
+			console.log("Generated questions, calling startNewGame...", {
+				questionsCount: questions.length,
+			});
 			startNewGame(questions);
 
 			setSessionState((prev) => ({ ...prev, isLoading: false }));
@@ -61,24 +64,22 @@ export function useGameSession() {
 	// Save game result when game completes
 	const saveGameResult = useCallback(() => {
 		if (sessionState.isSaved || !player) return;
-		
+
 		console.log("Saving game result programmatically...", {
 			gameState: {
 				isComplete: gameState.isComplete,
 				totalScore: gameState.totalScore,
 				questionsLength: gameState.questions.length,
 				answersCount: gameState.answers.length,
-				startTime: gameState.startTime
+				startTime: gameState.startTime,
 			},
 			player: {
 				id: player.id,
-				name: player.name
-			}
+				name: player.name,
+			},
 		});
 
-		const totalTime = Math.round(
-			(Date.now() - gameState.startTime) / 1000,
-		);
+		const totalTime = Math.round((Date.now() - gameState.startTime) / 1000);
 		const gameResult = {
 			score: gameState.totalScore,
 			totalQuestions: gameState.questions.length,
@@ -91,7 +92,6 @@ export function useGameSession() {
 		console.log("Game result saved successfully");
 		setSessionState((prev) => ({ ...prev, isSaved: true }));
 	}, [sessionState.isSaved, player, gameState, addGameResult]);
-
 
 	// Initialize on mount
 	useEffect(() => {
@@ -109,22 +109,21 @@ export function useGameSession() {
 			totalScore: gameState.totalScore,
 			questionsLength: gameState.questions.length,
 			currentQuestionIndex: gameState.currentQuestionIndex,
-			answersLength: gameState.answers.length
+			answersLength: gameState.answers.length,
 		});
-		
+
 		setSessionState({
 			isLoading: false,
 			error: null,
 			isSaved: false,
 		});
-		
+
 		setIsInitialized(false);
-		
+
 		initializeGame();
-		
+
 		console.log("=== RESET SESSION END ===");
 	}, []);
-
 
 	return {
 		gameState,

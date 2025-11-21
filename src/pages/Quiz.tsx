@@ -1,6 +1,7 @@
 import { Clock, Lightbulb, Play, Share, Trophy } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, memo } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth.ts";
+import { useGame } from "@/hooks/useGame.ts";
 import { ErrorBoundary, QuizErrorFallback } from "../components/ErrorBoundary";
 import { PlayerAuth } from "../components/PlayerAuth";
 import { QuizCard } from "../components/QuizCard";
@@ -12,16 +13,8 @@ import { useGameSession } from "../hooks/useGameSession";
 import { useShareCard } from "../hooks/useShareCard";
 import { useTimer } from "../hooks/useTimer";
 import { GAME_CONFIG } from "../utils/constants";
-import {useGame} from "@/hooks/useGame.ts";
 
 const QuizContent = memo(function QuizContent() {
-	console.log("QuizContent component rendered");
-	
-	useEffect(() => {
-		console.log("QuizContent component mounted");
-		return () => console.log("QuizContent component unmounted");
-	}, []);
-	
 	const {
 		gameState,
 		sessionState,
@@ -34,7 +27,7 @@ const QuizContent = memo(function QuizContent() {
 	const { player } = useAuth();
 	const { shareCard } = useShareCard();
 	const { getLeaderboard } = useGameData();
-	const { resetGame } = useGame()
+	const { resetGame } = useGame();
 	const shareCardRef = useRef<HTMLDivElement>(null);
 	const nextQuestionRef = useRef(nextQuestion);
 
@@ -57,16 +50,22 @@ const QuizContent = memo(function QuizContent() {
 				setTimeout(() => {
 					nextQuestionRef.current();
 					// Save game if completed after timeout
-					if (gameState.currentQuestionIndex >= gameState.questions.length - 1) {
-						console.log("Timer finished, saving game and resetting...");
+					if (
+						gameState.currentQuestionIndex >=
+						gameState.questions.length - 1
+					) {
 						saveGameResult();
 						resetGame();
-						console.log("Game reset completed, questions length:", gameState.questions.length);
 					}
 				}, 0);
 			});
 		}
-	}, [currentQuestion, gameState.isComplete, startTimer]);
+	}, [
+		currentQuestion,
+		gameState.isComplete,
+		startTimer,
+		gameState.questions.length,
+	]);
 
 	// Loading state
 	if (sessionState.isLoading) {
@@ -105,7 +104,6 @@ const QuizContent = memo(function QuizContent() {
 						leaderboardPosition={leaderboardPosition}
 					/>
 
-
 					<div className="flex gap-4 mt-6">
 						<button
 							onClick={handleShare}
@@ -135,7 +133,7 @@ const QuizContent = memo(function QuizContent() {
 
 function QuizStartCard({ onStart }: { onStart: () => void }) {
 	const { resetSession } = useGameSession();
-	const { resetGame } = useGame()
+	const { resetGame } = useGame();
 	const { player } = useAuth();
 
 	return (
@@ -183,7 +181,7 @@ function QuizStartCard({ onStart }: { onStart: () => void }) {
 								<button
 									onClick={() => {
 										resetSession();
-										resetGame()
+										resetGame();
 										onStart();
 									}}
 									className="flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-200 text-lg cursor-pointer"

@@ -145,7 +145,11 @@ export async function generateQuizQuestions(
 	// Shuffle tracks to get random order each time
 	tracks.sort(() => Math.random() - 0.5);
 
-	for (let i = 0, attempts = 0; i < questionCount && tracks.length > 0 && attempts < 100; attempts++) {
+	for (
+		let i = 0, attempts = 0;
+		i < questionCount && tracks.length > 0 && attempts < 100;
+		attempts++
+	) {
 		const availableTrack = tracks.find(
 			(track) => !usedArtists.has(track.artistName),
 		);

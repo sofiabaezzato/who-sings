@@ -68,7 +68,11 @@ export const useGameDataStore = create<GameDataStore>()(
 						gameHistory: [...updatedPlayers[playerIndex].gameHistory, result],
 					};
 
-					console.log("Game result added successfully for player:", playerId, result);
+					console.log(
+						"Game result added successfully for player:",
+						playerId,
+						result,
+					);
 					return { allPlayers: updatedPlayers };
 				});
 			},

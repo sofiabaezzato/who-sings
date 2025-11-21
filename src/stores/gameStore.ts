@@ -152,7 +152,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 				nextIndex,
 				totalQuestions: state.gameState.questions.length,
 				willBeComplete: isComplete,
-				currentAnswers: state.gameState.answers.length
+				currentAnswers: state.gameState.answers.length,
 			});
 
 			const newGameState = {
@@ -165,8 +165,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
 				console.log("Game Completed!", {
 					finalScore: newGameState.totalScore,
 					totalAnswers: newGameState.answers.length,
-					correctAnswers: newGameState.answers.filter(a => a.isCorrect).length,
-					questionsLength: newGameState.questions.length
+					correctAnswers: newGameState.answers.filter((a) => a.isCorrect)
+						.length,
+					questionsLength: newGameState.questions.length,
 				});
 			}
 
@@ -191,7 +192,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 			console.log("Starting New Game:", {
 				questionsCount: questions.length,
 				startTime: newGameState.startTime,
-				isComplete: newGameState.isComplete
+				isComplete: newGameState.isComplete,
 			});
 
 			return {
