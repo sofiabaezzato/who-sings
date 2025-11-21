@@ -35,7 +35,7 @@ const ShareCardComponent = forwardRef<HTMLDivElement, ShareCardProps>(
 					data-correct-answers={correctAnswers}
 					data-total-questions={totalQuestions}
 					data-leaderboard-position={leaderboardPosition}
-					className="w-80 h-[640px] rounded-3xl text-white bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 relative box-border overflow-hidden"
+					className="w-96 h-[640px] rounded-3xl text-white bg-gradient-to-br from-orange-500 to-orange-600 relative box-border overflow-hidden"
 				>
 					{/* Background Pattern */}
 					<div className="absolute inset-0 opacity-10">

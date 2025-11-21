@@ -34,10 +34,12 @@ export function useShareCard() {
 
 				// Generate canvas from the card element
 				const canvas = await html2canvas(cardElement, {
-					backgroundColor: "rgba(0,0,0,0)",
+					backgroundColor: "#ea580c",
 					scale: 2,
 					useCORS: true,
 					logging: false,
+					// width: 1080,
+					// height: 1610,
 				});
 
 				// Convert canvas to blob
@@ -51,7 +53,7 @@ export function useShareCard() {
 						type: "image/png",
 					});
 
-					// Try Web Share API first (mobile-friendly)
+					// Try Web Share API first for mobile
 					if (
 						navigator.share &&
 						navigator.canShare &&
