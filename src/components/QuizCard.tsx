@@ -37,7 +37,7 @@ export function QuizCard({ className = "" }: QuizCardProps) {
 			)}
 		>
 			{/* Header with progress and timer */}
-			<div className="p-4 bg-gradient-to-r from-orange-300 to-orange-600">
+			<div className="p-4 bg-gradient-to-r from-orange-500 to-orange-600">
 				<div className="flex items-center justify-end mb-2">
 					<span className="text-white text-sm font-medium">
 						{timeRemaining}s
