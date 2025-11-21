@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useGame } from "../hooks/useGame";
+import { useGameSession } from "../hooks/useGameSession";
 import { useTimer } from "../hooks/useTimer";
 import { cn } from "../lib/utils";
 
@@ -19,6 +20,7 @@ export function AnswerOptions({
 	const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 	const [showResult, setShowResult] = useState(false);
 	const { answerQuestion, nextQuestion, isLastQuestion } = useGame();
+	const { saveGameResult, sessionState } = useGameSession();
 	const { timeRemaining, stopTimer } = useTimer();
 
 	const handleAnswerSelect = useCallback(
@@ -30,6 +32,14 @@ export function AnswerOptions({
 			stopTimer();
 
 			answerQuestion(answer, timeRemaining, hintUsed);
+
+			// Save game result if this is the last question
+			if (isLastQuestion && !sessionState.isSaved) {
+				console.log("Last question answered, saving game result...");
+				setTimeout(() => {
+					saveGameResult();
+				}, 100); // Small delay to ensure game state updates
+			}
 
 			setTimeout(() => {
 				nextQuestion();
@@ -48,6 +58,8 @@ export function AnswerOptions({
 			nextQuestion,
 			isLastQuestion,
 			hintUsed,
+			sessionState.isSaved,
+			saveGameResult,
 		],
 	);
 

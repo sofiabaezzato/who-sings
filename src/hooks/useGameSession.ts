@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { generateQuizQuestions } from "../services/musixmatch";
 import { useAuth } from "./useAuth";
 import { useGame } from "./useGame";
@@ -7,145 +7,131 @@ import { useGameData } from "./useGameData";
 interface GameSessionState {
 	isLoading: boolean;
 	error: string | null;
-	isCompleted: boolean;
-	saveError: string | null;
+	isSaved: boolean;
 }
 
 export function useGameSession() {
-	const { gameState, currentQuestion, startNewGame, ...gameActions } =
+	const { gameState, currentQuestion, startNewGame, resetGame, ...gameActions } =
 		useGame();
 	const { addGameResult } = useGameData();
 	const { player } = useAuth();
 
 	const [sessionState, setSessionState] = useState<GameSessionState>({
-		isLoading: true,
+		isLoading: false,
 		error: null,
-		isCompleted: false,
-		saveError: null,
+		isSaved: false,
 	});
+	const [isInitialized, setIsInitialized] = useState(false);
 
-	const saveAttemptedRef = useRef(false);
-	const initializationRef = useRef(false);
 
 	// Initialize game session
 	const initializeGame = useCallback(async () => {
-		if (initializationRef.current) return;
+		console.log("Initialize Game Called")
+
+		if (isInitialized || gameState.questions.length > 0) {
+			console.log("Initialize Game Skipped:", {
+				reason: isInitialized ? "already initialized" : "game already has questions"
+			});
+			return;
+		}
 
 		try {
 			setSessionState((prev) => ({ ...prev, error: null, isLoading: true }));
 
 			const questions = await generateQuizQuestions();
+			setIsInitialized(true);
+
+			console.log("Generated questions, calling startNewGame...", { questionsCount: questions.length });
 			startNewGame(questions);
 
 			setSessionState((prev) => ({ ...prev, isLoading: false }));
-			initializationRef.current = true;
-			saveAttemptedRef.current = false; // Reset for new game
+			console.log("Game initialization completed");
 		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : "Failed to load quiz";
+			console.error("Game initialization failed:", errorMessage);
 			setSessionState((prev) => ({
 				...prev,
 				error: errorMessage,
 				isLoading: false,
 			}));
 		}
-	}, [startNewGame]);
+	}, []);
 
-	// Handle game completion and result saving
-	useEffect(() => {
-		if (gameState.isComplete && !saveAttemptedRef.current && player) {
-			saveAttemptedRef.current = true;
+	// Save game result when game completes
+	const saveGameResult = useCallback(() => {
+		if (sessionState.isSaved || !player) return;
+		
+		console.log("Saving game result programmatically...", {
+			gameState: {
+				isComplete: gameState.isComplete,
+				totalScore: gameState.totalScore,
+				questionsLength: gameState.questions.length,
+				answersCount: gameState.answers.length,
+				startTime: gameState.startTime
+			},
+			player: {
+				id: player.id,
+				name: player.name
+			}
+		});
 
-			const saveGameResult = () => {
-				try {
-					const totalTime = Math.round(
-						(Date.now() - gameState.startTime) / 1000,
-					);
-					const gameResult = {
-						score: gameState.totalScore,
-						totalQuestions: gameState.questions.length,
-						completedAt: new Date().toISOString(),
-						timeSpent: totalTime,
-					};
+		const totalTime = Math.round(
+			(Date.now() - gameState.startTime) / 1000,
+		);
+		const gameResult = {
+			score: gameState.totalScore,
+			totalQuestions: gameState.questions.length,
+			completedAt: new Date().toISOString(),
+			timeSpent: totalTime,
+		};
 
-					addGameResult(player.id, gameResult);
+		console.log("Saving game result:", gameResult);
+		addGameResult(player.id, gameResult);
+		console.log("Game result saved successfully");
+		setSessionState((prev) => ({ ...prev, isSaved: true }));
+	}, [sessionState.isSaved, player, gameState, addGameResult]);
 
-					setSessionState((prev) => ({
-						...prev,
-						isCompleted: true,
-						saveError: null,
-					}));
-				} catch (error) {
-					console.error("Failed to save game result:", error);
-					setSessionState((prev) => ({
-						...prev,
-						saveError: "Failed to save game result. Please try again.",
-						isCompleted: true, // Still mark as completed for UI
-					}));
-				}
-			};
-
-			// Use setTimeout to ensure this runs after render
-			setTimeout(saveGameResult, 0);
-		}
-	}, [
-		gameState.isComplete,
-		gameState.totalScore,
-		gameState.questions.length,
-		gameState.startTime,
-		player,
-		addGameResult,
-	]);
 
 	// Initialize on mount
 	useEffect(() => {
-		initializeGame();
-	}, [initializeGame]);
+		if (!isInitialized) {
+			initializeGame();
+		}
+	}, []);
 
 	// Reset session when starting new game
 	const resetSession = useCallback(() => {
-		setSessionState({
-			isLoading: true,
-			error: null,
-			isCompleted: false,
-			saveError: null,
+		console.log("=== RESET SESSION START ===");
+		console.log("Before Reset - Session State:", sessionState);
+		console.log("Before Reset - Game State:", {
+			isComplete: gameState.isComplete,
+			totalScore: gameState.totalScore,
+			questionsLength: gameState.questions.length,
+			currentQuestionIndex: gameState.currentQuestionIndex,
+			answersLength: gameState.answers.length
 		});
-		initializationRef.current = false;
-		saveAttemptedRef.current = false;
+		
+		setSessionState({
+			isLoading: false,
+			error: null,
+			isSaved: false,
+		});
+		
+		setIsInitialized(false);
+		
 		initializeGame();
-	}, [initializeGame]);
+		
+		console.log("=== RESET SESSION END ===");
+	}, []);
 
-	// Retry saving if it failed
-	const retrySave = useCallback(() => {
-		if (gameState.isComplete && player && sessionState.saveError) {
-			try {
-				const totalTime = Math.round((Date.now() - gameState.startTime) / 1000);
-				const gameResult = {
-					score: gameState.totalScore,
-					totalQuestions: gameState.questions.length,
-					completedAt: new Date().toISOString(),
-					timeSpent: totalTime,
-				};
-
-				addGameResult(player.id, gameResult);
-
-				setSessionState((prev) => ({
-					...prev,
-					saveError: null,
-				}));
-			} catch (error) {
-				console.error("Retry save failed:", error);
-				// Keep the saveError state for user feedback
-			}
-		}
-	}, [gameState, player, sessionState.saveError, addGameResult]);
 
 	return {
 		gameState,
 		sessionState,
 		resetSession,
-		retrySave,
 		currentQuestion,
+		saveGameResult,
 		...gameActions,
 	};
 }

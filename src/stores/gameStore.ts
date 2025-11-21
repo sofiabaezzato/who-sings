@@ -34,7 +34,7 @@ export interface GameState {
 }
 
 interface GameStore {
-	// Game state (for compatibility)
+	// Game state
 	gameState: GameState;
 
 	// Computed properties (stored in state for reactivity)
@@ -147,11 +147,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
 			const nextIndex = state.gameState.currentQuestionIndex + 1;
 			const isComplete = nextIndex >= state.gameState.questions.length;
 
+			console.log("Next Question:", {
+				currentIndex: state.gameState.currentQuestionIndex,
+				nextIndex,
+				totalQuestions: state.gameState.questions.length,
+				willBeComplete: isComplete,
+				currentAnswers: state.gameState.answers.length
+			});
+
 			const newGameState = {
 				...state.gameState,
 				currentQuestionIndex: nextIndex,
 				isComplete,
 			};
+
+			if (isComplete) {
+				console.log("Game Completed!", {
+					finalScore: newGameState.totalScore,
+					totalAnswers: newGameState.answers.length,
+					correctAnswers: newGameState.answers.filter(a => a.isCorrect).length,
+					questionsLength: newGameState.questions.length
+				});
+			}
 
 			return {
 				gameState: newGameState,
@@ -171,6 +188,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 				startTime: Date.now(),
 			};
 
+			console.log("Starting New Game:", {
+				questionsCount: questions.length,
+				startTime: newGameState.startTime,
+				isComplete: newGameState.isComplete
+			});
+
 			return {
 				gameState: newGameState,
 				...updateComputedValues(newGameState),
@@ -179,9 +202,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 	},
 
 	resetGame: () => {
-		set(() => ({
-			gameState: initialGameState,
-			...updateComputedValues(initialGameState),
-		}));
+		set(() => {
+			console.log("Zustand resetGame called, setting questions to []");
+			return {
+				gameState: initialGameState,
+				...updateComputedValues(initialGameState),
+			};
+		});
 	},
 }));

@@ -61,11 +61,6 @@ export const useGameDataStore = create<GameDataStore>()(
 					const playerIndex = state.allPlayers.findIndex(
 						(p) => p.id === playerId,
 					);
-					
-					if (playerIndex === -1) {
-						console.error("Player not found in allPlayers:", playerId, "Available players:", state.allPlayers.map(p => p.id));
-						return state;
-					}
 
 					const updatedPlayers = [...state.allPlayers];
 					updatedPlayers[playerIndex] = {

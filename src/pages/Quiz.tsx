@@ -1,5 +1,5 @@
 import { Clock, Lightbulb, Play, Share, Trophy } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, memo } from "react";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { ErrorBoundary, QuizErrorFallback } from "../components/ErrorBoundary";
 import { PlayerAuth } from "../components/PlayerAuth";
@@ -12,20 +12,29 @@ import { useGameSession } from "../hooks/useGameSession";
 import { useShareCard } from "../hooks/useShareCard";
 import { useTimer } from "../hooks/useTimer";
 import { GAME_CONFIG } from "../utils/constants";
+import {useGame} from "@/hooks/useGame.ts";
 
-function QuizContent() {
+const QuizContent = memo(function QuizContent() {
+	console.log("QuizContent component rendered");
+	
+	useEffect(() => {
+		console.log("QuizContent component mounted");
+		return () => console.log("QuizContent component unmounted");
+	}, []);
+	
 	const {
 		gameState,
 		sessionState,
 		resetSession,
-		retrySave,
 		nextQuestion,
 		currentQuestion,
+		saveGameResult,
 	} = useGameSession();
 	const { startTimer } = useTimer();
 	const { player } = useAuth();
 	const { shareCard } = useShareCard();
 	const { getLeaderboard } = useGameData();
+	const { resetGame } = useGame()
 	const shareCardRef = useRef<HTMLDivElement>(null);
 	const nextQuestionRef = useRef(nextQuestion);
 
@@ -47,6 +56,13 @@ function QuizContent() {
 				// Auto advance on timeout - use setTimeout to defer the state update
 				setTimeout(() => {
 					nextQuestionRef.current();
+					// Save game if completed after timeout
+					if (gameState.currentQuestionIndex >= gameState.questions.length - 1) {
+						console.log("Timer finished, saving game and resetting...");
+						saveGameResult();
+						resetGame();
+						console.log("Game reset completed, questions length:", gameState.questions.length);
+					}
 				}, 0);
 			});
 		}
@@ -89,20 +105,6 @@ function QuizContent() {
 						leaderboardPosition={leaderboardPosition}
 					/>
 
-					{/* Save error handling */}
-					{sessionState.saveError && (
-						<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
-							<p className="text-yellow-800 text-sm mb-2">
-								{sessionState.saveError}
-							</p>
-							<button
-								onClick={retrySave}
-								className="text-yellow-600 hover:text-yellow-700 text-sm font-medium underline"
-							>
-								Retry Save
-							</button>
-						</div>
-					)}
 
 					<div className="flex gap-4 mt-6">
 						<button
@@ -129,9 +131,11 @@ function QuizContent() {
 			<QuizCard />
 		</div>
 	);
-}
+});
 
 function QuizStartCard({ onStart }: { onStart: () => void }) {
+	const { resetSession } = useGameSession();
+	const { resetGame } = useGame()
 	const { player } = useAuth();
 
 	return (
@@ -177,7 +181,11 @@ function QuizStartCard({ onStart }: { onStart: () => void }) {
 
 							<div className="w-full flex items-center justify-center">
 								<button
-									onClick={onStart}
+									onClick={() => {
+										resetSession();
+										resetGame()
+										onStart();
+									}}
 									className="flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-200 text-lg cursor-pointer"
 								>
 									<Play className="w-5 h-5 mr-2" />
