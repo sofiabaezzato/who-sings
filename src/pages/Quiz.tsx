@@ -27,7 +27,7 @@ const QuizContent = memo(function QuizContent() {
 	const { player } = useAuth();
 	const { shareCard } = useShareCard();
 	const { getLeaderboard } = useGameData();
-	const { resetGame } = useGame();
+	// const { resetGame } = useGame();
 	const shareCardRef = useRef<HTMLDivElement>(null);
 	const nextQuestionRef = useRef(nextQuestion);
 
@@ -55,7 +55,8 @@ const QuizContent = memo(function QuizContent() {
 						gameState.questions.length - 1
 					) {
 						saveGameResult();
-						resetGame();
+						// todo resetGame prevent the display of the share card
+						// resetGame();
 					}
 				}, 0);
 			});
